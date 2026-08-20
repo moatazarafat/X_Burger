@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="Css/homepage.css">
+    <title>X-Burger | Sign Up</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Rubik+Spray+Paint&display=swap" rel="stylesheet">
+    <style>
+      body {
+        background: #1A1A1A;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Roboto', sans-serif;
+      }
+
+      .register-card {
+        background: #FAFAFA;
+        border-radius: 18px;
+        padding: 40px;
+        width: 100%;
+        max-width: 420px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      }
+
+      .register-card h2 {
+        color: #C41E2A;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 6px;
+      }
+
+      .register-card p.subtitle {
+        text-align: center;
+        color: #3D3D3D;
+        margin-bottom: 24px;
+      }
+
+      .register-note {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: #FFF6E5;
+        border: 1px solid #F4B740;
+        color: #7A5A00;
+        font-size: 0.82rem;
+        border-radius: 10px;
+        padding: 10px 12px;
+        margin-bottom: 20px;
+      }
+
+      .btn-register {
+        background: #F4B740;
+        border: none;
+        color: #1A1A1A;
+        font-weight: 600;
+        border-radius: 30px;
+        padding: 10px;
+      }
+
+      .btn-register:hover {
+        background: #E8792F;
+        color: #fff;
+      }
+
+      .form-control.is-invalid-custom {
+        border-color: #C41E2A;
+      }
+
+      .field-error {
+        color: #C41E2A;
+        font-size: 0.78rem;
+        margin-top: 4px;
+        display: none;
+      }
+
+      a.back-link {
+        display: block;
+        text-align: center;
+        margin-top: 16px;
+        color: #3D3D3D;
+        text-decoration: none;
+        font-size: 14px;
+      }
+
+      a.back-link:hover {
+        color: #C41E2A;
+      }
+    </style>
+</head>
+<body>
+
+  <div class="register-card">
+    <h2>X-Burger</h2>
+    <p class="subtitle">Create an account to place your order</p>
+
+    <div class="register-note">
+      <i class="fa-solid fa-circle-info"></i>
+      <span>You'll need an account to browse the menu and order — it only takes a few seconds.</span>
+    </div>
+
+    <form id="registerForm" novalidate>
+      <div class="mb-3">
+        <label for="regName" class="form-label">Name</label>
+        <input type="text" class="form-control" id="regName" placeholder="Enter your name" required>
+        <div class="field-error" id="regNameError">Please enter your name.</div>
+      </div>
+      <div class="mb-3">
+        <label for="regPhone" class="form-label">Phone</label>
+        <input type="text" class="form-control" id="regPhone" placeholder="Enter your phone number" required>
+        <div class="field-error" id="regPhoneError">Please enter a valid phone number.</div>
+      </div>
+      <button type="submit" class="btn btn-register w-100">Sign Up & Continue</button>
+    </form>
+
+    <a href="index.html" class="back-link">&larr; Back to Menu</a>
+  </div>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<script>
+  document.getElementById('registerForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const nameEl = document.getElementById('regName');
+    const phoneEl = document.getElementById('regPhone');
+    const name = nameEl.value.trim();
+    const phone = phoneEl.value.trim();
+
+    const nameError = document.getElementById('regNameError');
+    const phoneError = document.getElementById('regPhoneError');
+
+    let valid = true;
+
+    if (!name) {
+      nameEl.classList.add('is-invalid-custom');
+      nameError.style.display = 'block';
+      valid = false;
+    } else {
+      nameEl.classList.remove('is-invalid-custom');
+      nameError.style.display = 'none';
+    }
+
+    const phoneDigits = phone.replace(/\D/g, '');
+    if (!phone || phoneDigits.length < 8) {
+      phoneEl.classList.add('is-invalid-custom');
+      phoneError.style.display = 'block';
+      valid = false;
+    } else {
+      phoneEl.classList.remove('is-invalid-custom');
+      phoneError.style.display = 'none';
+    }
+
+    if (!valid) return;
+
+    // save the "logged in" user — this is the only thing that unlocks the rest of the site
+    localStorage.setItem('xburger_user', JSON.stringify({ name, phone }));
+
+    // send them back to whatever page they were trying to reach before we gated them,
+    // or to the menu by default
+    const redirectTo = sessionStorage.getItem('xburger_redirect_after_register');
+    sessionStorage.removeItem('xburger_redirect_after_register');
+    window.location.href = redirectTo || 'index.html#menu';
+  });
+</script>
+
+</body>
+</html>
