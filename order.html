@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Order - X-Burger</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Rubik+Spray+Paint&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+
+    <style>
+        * { margin: 0; padding: 0; }
+        html, body { overflow-x: hidden; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #1A1A1A;
+            background: #FFF6EC;
+        }
+
+        img { max-width: 100%; }
+
+        h1, h2, h3, .navbar-brand, .btn-warning, .stub-total .amount {
+            font-family: 'Archivo Black', sans-serif;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-link, .card-title, .form-label { font-family: 'Inter', sans-serif; }
+
+        .qus-subtitle {
+            font-family: 'Roboto', sans-serif;
+            font-optical-sizing: auto;
+            font-weight: 400;
+            font-variation-settings: 'wdth' 100;
+        }
+
+        .stamp {
+            font-family: 'Rubik Spray Paint', cursive;
+            color: #D64541;
+        }
+
+        /* ---------- Navbar (reused, now solid since this is an interior page) ---------- */
+        .navbar-overlay {
+            background: #1A1A1A;
+        }
+        .navbar-overlay .nav-link,
+        .navbar-overlay .navbar-brand {
+            color: #FFF6EC !important;
+            margin-left: 20px;
+        }
+        .navbar-overlay .nav-link.active { color: #F4B740 !important; font-weight: 600; }
+        .navbar-overlay .nav-link:hover { color: #F4B740 !important; }
+        .navbar-overlay .navbar-toggler-icon { filter: invert(1); }
+
+        .cart-btn {
+            background: transparent;
+            border: none;
+            color: #FFF6EC;
+            font-size: 1.2rem;
+            position: relative;
+            padding: 6px 10px;
+        }
+        .cart-badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            background: #F4B740;
+            color: #1A1A1A;
+            font-size: 0.65rem;
+            font-weight: 700;
+            border-radius: 50px;
+            padding: 1px 6px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* ---------- Page hero strip ---------- */
+        .order-hero {
+            background: #1A1A1A;
+            color: #FFF6EC;
+            padding: 130px 0 40px;
+        }
+        .order-hero h1 { font-size: 2.4rem; }
+        .order-hero .qus-subtitle { color: rgba(255,246,236,0.65); font-size: 1rem; }
+
+        /* ---------- Step indicator (real sequence: cart -> details -> payment) ---------- */
+        .step-track {
+            display: flex;
+            gap: 10px;
+            margin-top: 24px;
+        }
+        .step-track .step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: rgba(255,246,236,0.5);
+        }
+        .step-track .step.is-active { color: #F4B740; font-weight: 600; }
+        .step-track .step .num {
+            width: 24px; height: 24px;
+            border-radius: 50%;
+            border: 1px solid currentColor;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.75rem;
+        }
+        .step-track .divider { color: rgba(255,246,236,0.25); }
+
+        /* ---------- Order ticket (signature element) ---------- */
+        .ticket {
+            background: #FFFFFF;
+            border-radius: 6px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(26,26,26,0.08);
+            overflow: hidden;
+        }
+        .ticket::before, .ticket::after {
+            content: "";
+            position: absolute;
+            width: 26px; height: 26px;
+            background: #FFF6EC;
+            border-radius: 50%;
+            top: 50%;
+        }
+        .ticket::before { left: -13px; transform: translateY(-50%); }
+        .ticket::after { right: -13px; transform: translateY(-50%); }
+        .ticket-perf {
+            border-top: 2px dashed #E3D8C6;
+            margin: 0 24px;
+        }
+        .ticket-head {
+            padding: 22px 26px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .ticket-head .stamp {
+            font-size: 1.1rem;
+            transform: rotate(-6deg);
+            display: inline-block;
+        }
+        .ticket-body { padding: 18px 26px; }
+
+        .order-line {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 0;
+            border-bottom: 1px solid #F1E9DB;
+        }
+        .order-line:last-child { border-bottom: none; }
+        .order-line img {
+            width: 56px; height: 56px;
+            object-fit: cover;
+            border-radius: 8px;
+            background: #F1E9DB;
+            flex-shrink: 0;
+        }
+        .order-line .name { font-weight: 600; font-size: 0.95rem; }
+        .order-line .meta { font-size: 0.78rem; color: #8A7F6F; }
+        .qty-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .qty-control button {
+            width: 24px; height: 24px;
+            border-radius: 50%;
+            border: 1px solid #E3D8C6;
+            background: #FFF6EC;
+            font-size: 0.8rem;
+            line-height: 1;
+        }
+        .line-price { font-weight: 700; min-width: 62px; text-align: right; }
+        .remove-line {
+            background: none; border: none; color: #C7BBA8; font-size: 0.85rem;
+        }
+        .remove-line:hover { color: #D64541; }
+
+        .ticket-totals { padding: 16px 26px 24px; }
+        .ticket-totals .row-line {
+            display: flex; justify-content: space-between;
+            font-size: 0.9rem; color: #6B6255; padding: 4px 0;
+        }
+        .ticket-totals .row-line.grand {
+            color: #1A1A1A;
+            font-size: 1.15rem;
+            font-family: 'Archivo Black', sans-serif;
+            padding-top: 12px;
+            margin-top: 6px;
+            border-top: 1px solid #F1E9DB;
+        }
+
+        .empty-cart { padding: 50px 26px; text-align: center; color: #8A7F6F; }
+        .empty-cart i { font-size: 2.2rem; color: #E3D8C6; margin-bottom: 10px; }
+
+        /* ---------- Forms ---------- */
+        .form-panel {
+            background: #FFFFFF;
+            border-radius: 6px;
+            box-shadow: 0 10px 30px rgba(26,26,26,0.08);
+            padding: 28px 30px;
+        }
+        .panel-title {
+            font-size: 1.05rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+        .panel-title .num-badge {
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            background: #1A1A1A;
+            color: #F4B740;
+            font-family: 'Archivo Black', sans-serif;
+            font-size: 0.8rem;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .form-control, .form-select {
+            border: 1px solid #E3D8C6;
+            background: #FFFDFA;
+            padding: 10px 12px;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #F4B740;
+            box-shadow: 0 0 0 3px rgba(244,183,64,0.25);
+        }
+        .form-label { font-size: 0.82rem; font-weight: 600; color: #4A4438; margin-bottom: 4px; }
+
+        .pay-method {
+            border: 1.5px solid #E3D8C6;
+            border-radius: 6px;
+            padding: 14px 16px;
+            cursor: pointer;
+            transition: border-color .15s ease, background .15s ease;
+        }
+        .pay-method:hover { border-color: #F4B740; }
+        .pay-method.active {
+            border-color: #F4B740;
+            background: #FFF9EC;
+        }
+        .pay-method i { font-size: 1.3rem; }
+
+        #cardFields { display: none; }
+        #cardFields.show { display: block; }
+
+        .btn-place-order {
+            background: #F4B740;
+            border: none;
+            color: #1A1A1A;
+            font-family: 'Archivo Black', sans-serif;
+            letter-spacing: 0.5px;
+            padding: 14px;
+            font-size: 0.95rem;
+            border-radius: 6px;
+            transition: transform .12s ease, background .15s ease;
+        }
+        .btn-place-order:hover { background: #FFC868; transform: translateY(-1px); }
+        .btn-place-order:disabled { opacity: 0.5; transform: none; cursor: not-allowed; }
+
+        .secure-note {
+            font-size: 0.78rem;
+            color: #8A7F6F;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            justify-content: center;
+            margin-top: 12px;
+        }
+
+        /* ---------- Confirmation ---------- */
+        .confirm-icon {
+            width: 74px; height: 74px;
+            border-radius: 50%;
+            background: #1A1A1A;
+            color: #F4B740;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.8rem;
+            margin: 0 auto 18px;
+        }
+
+        @media (max-width: 991px) {
+            .order-hero { padding: 110px 0 30px; }
+            .step-track { flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-overlay fixed-top" id="mainNavbar">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="index.html">
+            <span style="font-family:'Archivo Black',sans-serif;color:#F4B740;">X</span><span style="font-family:'Archivo Black',sans-serif;">-BURGER</span>
+        </a>
+
+        <div class="d-flex align-items-center order-lg-2">
+            <button class="cart-btn me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas" aria-controls="cartOffcanvas" aria-label="Open your order">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span class="cart-badge" id="cartBadge">0</span>
+            </button>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link" href="index.html#home">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="index.html#menu">Menu</a></li>
+                <li class="nav-item"><a class="nav-link" href="index.html#about">About</a></li>
+                <li class="nav-item"><a class="nav-link" href="index.html#contact">Contact</a></li>
+                <li class="nav-item"><a class="nav-link active" href="order.html">Your Order</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- ============ Cart Offcanvas (referenced by navbar, defined here) ============ -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="cartOffcanvas" aria-labelledby="cartOffcanvasLabel">
+    <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title" id="cartOffcanvasLabel" style="font-family:'Archivo Black',sans-serif;">Your Cart</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body d-flex flex-column">
+        <div id="offcanvasCartItems" class="flex-grow-1"></div>
+        <div class="border-top pt-3 mt-2">
+            <div class="d-flex justify-content-between mb-3">
+                <span class="fw-semibold">Subtotal</span>
+                <span class="fw-bold" id="offcanvasSubtotal">EGP 0.00</span>
+            </div>
+            <a href="order.html" class="btn btn-place-order w-100">Go to checkout</a>
+        </div>
+    </div>
+</div>
+
+<!-- ============ Hero / step tracker ============ -->
+<section class="order-hero">
+    <div class="container">
+        <p class="qus-subtitle text-uppercase mb-2" style="letter-spacing:2px;">Almost there</p>
+        <h1>Your Order</h1>
+        <div class="step-track">
+            <div class="step"><span class="num">1</span><span>Cart</span></div>
+            <span class="divider">—</span>
+            <div class="step is-active"><span class="num">2</span><span>Details &amp; Payment</span></div>
+            <span class="divider">—</span>
+            <div class="step"><span class="num">3</span><span>Confirmation</span></div>
+        </div>
+    </div>
+</section>
+
+<!-- ============ Main order + payment layout ============ -->
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+
+            <!-- Order ticket -->
+            <div class="col-lg-5">
+                <div class="ticket">
+                    <div class="ticket-head">
+                        <div>
+                            <div class="qus-subtitle" style="font-size:0.78rem;color:#8A7F6F;letter-spacing:1px;">ORDER TICKET</div>
+                            <h3 style="font-size:1.15rem;">Order #<span id="orderNumber">7042</span></h3>
+                        </div>
+                        <span class="stamp">FRESH!</span>
+                    </div>
+                    <div class="ticket-perf"></div>
+                    <div class="ticket-body" id="ticketBody">
+                        <!-- line items injected by JS -->
+                    </div>
+                    <div class="ticket-totals">
+                        <div class="row-line"><span>Subtotal</span><span id="sumSubtotal">EGP 0.00</span></div>
+                        <div class="row-line"><span>Delivery fee</span><span id="sumDelivery">EGP 25.00</span></div>
+                        <div class="row-line"><span>Tax (14%)</span><span id="sumTax">EGP 0.00</span></div>
+                        <div class="row-line grand"><span>Total</span><span id="sumTotal">EGP 0.00</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Delivery + Payment -->
+            <div class="col-lg-7">
+                <form id="orderForm" novalidate>
+
+                    <div class="form-panel mb-4">
+                        <div class="panel-title">
+                            <span class="num-badge">1</span>
+                            <span>Delivery details</span>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Full name</label>
+                                <input type="text" class="form-control" id="custName" placeholder="Sara Ahmed" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Phone number</label>
+                                <input type="tel" class="form-control" id="custPhone" placeholder="01xxxxxxxxx" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Delivery address</label>
+                                <input type="text" class="form-control" placeholder="Street, building, floor" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">City</label>
+                                <input type="text" class="form-control" placeholder="Cairo" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Delivery notes (optional)</label>
+                                <input type="text" class="form-control" placeholder="Extra ketchup, no onions...">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-panel mb-4">
+                        <div class="panel-title">
+                            <span class="num-badge">2</span>
+                            <span>Payment method</span>
+                        </div>
+
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-4">
+                                <div class="pay-method text-center" data-method="card" title="Needs Fawry card tokenization approval — not live yet">
+                                    <i class="fa-solid fa-credit-card d-block mb-1"></i>
+                                    <span style="font-size:0.85rem;">Card</span>
+                                    <span class="badge bg-secondary mt-1" style="font-size:0.6rem;">Not connected yet</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="pay-method text-center" data-method="wallet" title="Needs Fawry mobile wallet approval — not live yet">
+                                    <i class="fa-solid fa-wallet d-block mb-1"></i>
+                                    <span style="font-size:0.85rem;">Mobile wallet</span>
+                                    <span class="badge bg-secondary mt-1" style="font-size:0.6rem;">Not connected yet</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="pay-method active text-center" data-method="PayAtFawry">
+                                    <i class="fa-solid fa-store d-block mb-1"></i>
+                                    <span style="font-size:0.85rem;">Pay at Fawry</span>
+                                    <span class="badge" style="font-size:0.6rem;background:#1A1A1A;color:#F4B740;">Live</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="cardFields" style="display:none;" class="text-muted small">
+                            Card payments aren't wired up yet — this needs Fawry's tokenization widget or PCI approval so we never handle raw card numbers ourselves.
+                        </div>
+
+                        <div id="walletFields" style="display:none;" class="text-muted small">
+                            Mobile wallet payments need a separate Fawry approval and aren't connected yet.
+                        </div>
+
+                        <div id="cashNote" class="text-muted small">
+                            We'll generate a FawryPay reference number. Pay it in cash or by card at any Fawry outlet, or through your bank/wallet app — no card details needed here.
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-place-order w-100" id="placeOrderBtn">
+                        Place order &mdash; <span id="btnTotal">EGP 0.00</span>
+                    </button>
+                    <p class="secure-note"><i class="fa-solid fa-lock"></i> Your payment details are encrypted and secure.</p>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============ Confirmation modal ============ -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius:10px;border:none;">
+            <div class="modal-body text-center py-5 px-4">
+                <div class="confirm-icon"><i class="fa-solid fa-check"></i></div>
+                <h3 class="mb-2">Order placed!</h3>
+                <p class="text-muted mb-1">Order #<span id="confirmOrderNumber">7042</span> is on the grill.</p>
+                <p class="text-muted mb-4">Estimated delivery: 30&ndash;40 minutes.</p>
+                <a href="index.html" class="btn btn-place-order">Back to menu</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-atwg2Pkwv9vp0ygtn1JAojH0nYbwNJLPhwyoVbhoPwBhjQPR5VtM2+xf0Uwh9KtT" crossorigin="anonymous"></script>
+<script>
+    // ---------------------------------------------------------------
+    // Cart storage: SAME model as index.html so items added on the
+    // menu page show up here automatically.
+    // Key:   'xburger_order'
+    // Shape: [{ name, price: "120 EGP", image, qty }, ...]
+    // (index.html owns addToOrder/changeQty/removeFromOrder logic —
+    //  this page just reads + updates the same array.)
+    // ---------------------------------------------------------------
+    const CART_KEY = 'xburger_order';
+    const DELIVERY_FEE = 25;
+    const TAX_RATE = 0.14;
+
+    function getCart() {
+        try { return JSON.parse(localStorage.getItem(CART_KEY) || '[]'); }
+        catch (e) { return []; }
+    }
+
+    function saveCart(cart) {
+        localStorage.setItem(CART_KEY, JSON.stringify(cart));
+    }
+
+    // index.html stores price as a string like "120 EGP" — pull the number out
+    function priceToNumber(priceStr) {
+        return parseInt(String(priceStr).replace(/[^\d]/g, ''), 10) || 0;
+    }
+
+    // stable-ish id for DOM/data-id purposes, derived from the item name
+    function slug(name) {
+        return String(name).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    }
+
+    function money(n) {
+        return 'EGP ' + n.toFixed(2);
+    }
+
+    // register.html saves { name, phone } here on sign up — reuse it so the
+    // customer doesn't have to retype their details at checkout.
+    function getRegisteredUser() {
+        try { return JSON.parse(localStorage.getItem('xburger_user') || 'null'); }
+        catch (e) { return null; }
+    }
+
+    function prefillCustomerDetails() {
+        const user = getRegisteredUser();
+        if (!user) return;
+        const nameEl = document.getElementById('custName');
+        const phoneEl = document.getElementById('custPhone');
+        if (nameEl && user.name) nameEl.value = user.name;
+        if (phoneEl && user.phone) phoneEl.value = user.phone;
+    }
+
+    function renderAll() {
+        const cart = getCart();
+        renderTicket(cart);
+        renderOffcanvas(cart);
+        renderTotals(cart);
+        renderBadge(cart);
+    }
+
+    function renderBadge(cart) {
+        const count = cart.reduce((sum, i) => sum + i.qty, 0);
+        document.getElementById('cartBadge').textContent = count;
+    }
+
+    function renderTicket(cart) {
+        const body = document.getElementById('ticketBody');
+        if (cart.length === 0) {
+            body.innerHTML = `
+                <div class="empty-cart">
+                    <i class="fa-solid fa-burger"></i>
+                    <p>Your ticket is empty.</p>
+                    <a href="index.html#menu" class="btn btn-place-order btn-sm mt-2">Browse the menu</a>
+                </div>`;
+            return;
+        }
+        body.innerHTML = cart.map(item => {
+            const unit = priceToNumber(item.price);
+            const img = item.image || '';
+            return `
+            <div class="order-line" data-name="${item.name.replace(/"/g, '&quot;')}">
+                <img src="${img}" alt="${item.name}" onerror="this.style.background='#F1E9DB';this.src='';">
+                <div class="flex-grow-1">
+                    <div class="name">${item.name}</div>
+                    <div class="meta">${money(unit)} each</div>
+                    <div class="qty-control mt-1">
+                        <button type="button" class="qty-down">&minus;</button>
+                        <span>${item.qty}</span>
+                        <button type="button" class="qty-up">+</button>
+                    </div>
+                </div>
+                <div class="text-end">
+                    <div class="line-price">${money(unit * item.qty)}</div>
+                    <button type="button" class="remove-line mt-1"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            </div>`;
+        }).join('');
+
+        body.querySelectorAll('.order-line').forEach(line => {
+            const name = line.dataset.name;
+            line.querySelector('.qty-up').addEventListener('click', () => changeQty(name, 1));
+            line.querySelector('.qty-down').addEventListener('click', () => changeQty(name, -1));
+            line.querySelector('.remove-line').addEventListener('click', () => removeItem(name));
+        });
+    }
+
+    function renderOffcanvas(cart) {
+        const el = document.getElementById('offcanvasCartItems');
+        if (cart.length === 0) {
+            el.innerHTML = '<p class="text-muted text-center mt-4">No items yet.</p>';
+        } else {
+            el.innerHTML = cart.map(item => {
+                const unit = priceToNumber(item.price);
+                return `
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <div class="fw-semibold" style="font-size:0.9rem;">${item.name}</div>
+                        <div class="text-muted" style="font-size:0.78rem;">x${item.qty}</div>
+                    </div>
+                    <div class="fw-bold" style="font-size:0.9rem;">${money(unit * item.qty)}</div>
+                </div>`;
+            }).join('');
+        }
+        const subtotal = cart.reduce((sum, i) => sum + priceToNumber(i.price) * i.qty, 0);
+        document.getElementById('offcanvasSubtotal').textContent = money(subtotal);
+    }
+
+    function renderTotals(cart) {
+        const subtotal = cart.reduce((sum, i) => sum + priceToNumber(i.price) * i.qty, 0);
+        const delivery = cart.length ? DELIVERY_FEE : 0;
+        const tax = subtotal * TAX_RATE;
+        const total = subtotal + delivery + tax;
+
+        document.getElementById('sumSubtotal').textContent = money(subtotal);
+        document.getElementById('sumDelivery').textContent = money(delivery);
+        document.getElementById('sumTax').textContent = money(tax);
+        document.getElementById('sumTotal').textContent = money(total);
+        document.getElementById('btnTotal').textContent = money(total);
+
+        const placeBtn = document.getElementById('placeOrderBtn');
+        placeBtn.disabled = cart.length === 0;
+    }
+
+    // These mirror index.html's changeQty/removeFromOrder so both pages
+    // stay in sync via the same 'xburger_order' localStorage array.
+    function changeQty(name, delta) {
+        const cart = getCart();
+        const item = cart.find(i => i.name === name);
+        if (!item) return;
+        item.qty += delta;
+        const updated = item.qty <= 0 ? cart.filter(i => i.name !== name) : cart;
+        saveCart(updated);
+        renderAll();
+    }
+
+    function removeItem(name) {
+        const cart = getCart().filter(i => i.name !== name);
+        saveCart(cart);
+        renderAll();
+    }
+
+    // Backend that actually talks to FawryPay. Change this if you deploy it elsewhere.
+    const CHECKOUT_API_URL = 'http://localhost:4000/api/checkout';
+
+    let selectedMethod = 'PayAtFawry';
+
+    // Payment method toggle
+    document.querySelectorAll('.pay-method').forEach(el => {
+        el.addEventListener('click', () => {
+            document.querySelectorAll('.pay-method').forEach(m => m.classList.remove('active'));
+            el.classList.add('active');
+            selectedMethod = el.dataset.method;
+            document.getElementById('cardFields').style.display = selectedMethod === 'card' ? 'block' : 'none';
+            document.getElementById('walletFields').style.display = selectedMethod === 'wallet' ? 'block' : 'none';
+            document.getElementById('cashNote').style.display = selectedMethod === 'PayAtFawry' ? 'block' : 'none';
+        });
+    });
+
+    function setPlacingState(isPlacing) {
+        const btn = document.getElementById('placeOrderBtn');
+        btn.disabled = isPlacing;
+        btn.dataset.originalText = btn.dataset.originalText || btn.innerHTML;
+        btn.innerHTML = isPlacing
+            ? '<span class="spinner-border spinner-border-sm me-2"></span>Talking to Fawry...'
+            : btn.dataset.originalText;
+    }
+
+    // Submit -> real call to the backend -> real Fawry reference number
+    document.getElementById('orderForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        if (!this.checkValidity()) {
+            this.reportValidity();
+            return;
+        }
+
+        if (selectedMethod !== 'PayAtFawry') {
+            alert('Card and mobile wallet payments aren\'t connected yet — pick "Pay at Fawry" to complete a real order.');
+            return;
+        }
+
+        const cart = getCart();
+        if (cart.length === 0) return;
+
+        const nameInput = document.getElementById('custName');
+        const phoneInput = document.getElementById('custPhone');
+
+        const delivery = DELIVERY_FEE;
+        const requestBody = {
+            customer: {
+                name: nameInput ? nameInput.value : '',
+                mobile: phoneInput ? phoneInput.value : '',
+                email: `${(phoneInput ? phoneInput.value : 'guest').replace(/\D/g, '')}@xburger-guest.com`
+            },
+            items: cart.map(i => ({
+                id: slug(i.name),
+                name: i.name,
+                price: priceToNumber(i.price),
+                qty: i.qty
+            })),
+            deliveryFee: delivery,
+            taxRate: TAX_RATE,
+            paymentMethod: 'PayAtFawry'
+        };
+
+        setPlacingState(true);
+        try {
+            const res = await fetch(CHECKOUT_API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(requestBody)
+            });
+            const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(data.message || data.error || 'Fawry request failed');
+            }
+
+            document.getElementById('confirmOrderNumber').textContent = data.fawryReferenceNumber;
+            const modalBody = document.querySelector('#confirmModal .modal-body');
+            modalBody.querySelector('p.mb-4').textContent =
+                'Pay this reference at any Fawry outlet or your banking/wallet app to complete your order.';
+
+            localStorage.removeItem(CART_KEY);
+            const modal = new bootstrap.Modal(document.getElementById('confirmModal'));
+            modal.show();
+            renderAll();
+        } catch (err) {
+            alert('Couldn\'t reach the payment backend: ' + err.message + '\n\nMake sure the server in xburger-backend is running (npm start) with valid Fawry credentials in .env.');
+        } finally {
+            setPlacingState(false);
+        }
+    });
+
+    prefillCustomerDetails();
+    renderAll();
+</script>
+</body>
+</html>
