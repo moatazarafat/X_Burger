@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>X-Burger Admin</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, Segoe UI, Roboto, sans-serif; background: #FFF6EC; color: #1A1A1A; margin: 0; }
+  header { background: #1A1A1A; color: #FFF6EC; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; }
+  header h1 { font-size: 1.1rem; margin: 0; }
+  #logoutBtn { background: none; border: 1px solid #F4B740; color: #F4B740; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
+  main { max-width: 960px; margin: 24px auto; padding: 0 16px; }
+  #loginBox { max-width: 340px; margin: 80px auto; background: #fff; padding: 24px; border-radius: 8px; box-shadow: 0 6px 20px rgba(0,0,0,.08); }
+  #loginBox input { width: 100%; padding: 10px; margin: 6px 0 14px; border: 1px solid #ddd; border-radius: 4px; }
+  #loginBox button, .refresh-btn { background: #F4B740; border: none; padding: 10px 16px; border-radius: 4px; font-weight: 700; cursor: pointer; }
+  #error { color: #D64541; font-size: .85rem; min-height: 18px; }
+  table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; }
+  th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #F1E9DB; font-size: .85rem; }
+  th { background: #1A1A1A; color: #F4B740; }
+  select { padding: 4px; border-radius: 4px; }
+  .badge { padding: 2px 8px; border-radius: 20px; font-size: .72rem; font-weight: 700; }
+  .badge.pending_payment { background: #ffe9c2; color: #8a5b00; }
+  .badge.paid { background: #d7f5da; color: #1a7d2b; }
+  .badge.preparing { background: #d6e6ff; color: #1a4d99; }
+  .badge.ready, .badge.completed { background: #1A1A1A; color: #F4B740; }
+  .badge.cancelled, .badge.expired { background: #f5d7d7; color: #99251a; }
+  .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  #hidden { display: none; }
+</style>
+</head>
+<body>
+
+<div id="loginBox">
+  <h2>X-Burger Admin</h2>
+  <p style="font-size:.85rem;color:#8A7F6F;">Log in with an admin account.</p>
+  <label>Phone</label>
+  <input id="loginPhone" placeholder="01xxxxxxxxx">
+  <label>Password</label>
+  <input id="loginPassword" type="password">
+  <div id="error"></div>
+  <button id="loginBtn">Log in</button>
+</div>
+
+<div id="hidden">
+  <header>
+    <h1>X-BURGER · Admin dashboard</h1>
+    <button id="logoutBtn">Log out</button>
+  </header>
+  <main>
+    <div class="toolbar">
+      <h2 style="margin:0;">Live orders</h2>
+      <button class="refresh-btn" id="refreshBtn">Refresh</button>
+    </div>
+    <table>
+      <thead>
+        <tr><th>#</th><th>Customer</th><th>Mobile</th><th>Total</th><th>Fawry ref</th><th>Status</th><th>Placed</th></tr>
+      </thead>
+      <tbody id="ordersBody"></tbody>
+    </table>
+  </main>
+</div>
+
+<script>
+const TOKEN_KEY = 'xburger_admin_token';
+
+function money(n) { return 'EGP ' + Number(n).toFixed(2); }
+
+function showApp() {
+  document.getElementById('loginBox').style.display = 'none';
+  document.getElementById('hidden').style.display = 'block';
+  loadOrders();
+}
+
+async function login() {
+  const phone = document.getElementById('loginPhone').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const errEl = document.getElementById('error');
+  errEl.textContent = '';
+  try {
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone, password }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Login failed');
+    if (!data.user.isAdmin) throw new Error('This account is not an admin. See README step 5.');
+    localStorage.setItem(TOKEN_KEY, data.token);
+    showApp();
+  } catch (err) {
+    errEl.textContent = err.message;
+  }
+}
+
+async function loadOrders() {
+  const token = localStorage.getItem(TOKEN_KEY);
+  const res = await fetch('/api/admin/orders', { headers: { Authorization: `Bearer ${token}` } });
+  if (res.status === 401 || res.status === 403) return logout();
+  const orders = await res.json();
+
+  const statuses = ['pending_payment', 'paid', 'preparing', 'ready', 'completed', 'cancelled', 'expired'];
+  document.getElementById('ordersBody').innerHTML = orders.map(o => `
+    <tr>
+      <td>#${o.id}</td>
+      <td>${o.customer_name}</td>
+      <td>${o.customer_mobile}</td>
+      <td>${money(o.total)}</td>
+      <td>${o.fawry_reference_number || '—'}</td>
+      <td>
+        <select data-id="${o.id}" class="status-select">
+          ${statuses.map(s => `<option value="${s}" ${s === o.status ? 'selected' : ''}>${s.replace('_',' ')}</option>`).join('')}
+        </select>
+      </td>
+      <td>${new Date(o.created_at + 'Z').toLocaleString()}</td>
+    </tr>
+  `).join('') || '<tr><td colspan="7" style="text-align:center;color:#8A7F6F;">No orders yet.</td></tr>';
+
+  document.querySelectorAll('.status-select').forEach(sel => {
+    sel.addEventListener('change', () => updateStatus(sel.dataset.id, sel.value));
+  });
+}
+
+async function updateStatus(id, status) {
+  const token = localStorage.getItem(TOKEN_KEY);
+  await fetch(`/api/admin/orders/${id}/status`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ status }),
+  });
+}
+
+function logout() {
+  localStorage.removeItem(TOKEN_KEY);
+  document.getElementById('hidden').style.display = 'none';
+  document.getElementById('loginBox').style.display = 'block';
+}
+
+document.getElementById('loginBtn').addEventListener('click', login);
+document.getElementById('logoutBtn').addEventListener('click', logout);
+document.getElementById('refreshBtn').addEventListener('click', loadOrders);
+
+if (localStorage.getItem(TOKEN_KEY)) showApp();
+</script>
+</body>
+</html>
