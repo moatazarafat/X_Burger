@@ -895,19 +895,22 @@ From our classic cheeseburger to our BBQ favorite, <br> it's all built the same 
   }
 
   document.getElementById('clearCartBtn').addEventListener('click', clearOrder);
+document.getElementById('checkoutBtn').addEventListener('click', function () {
 
-  document.getElementById('checkoutBtn').addEventListener('click', function () {
     const order = getOrder();
+
     if (order.length === 0) return;
-    clearOrder();
+
+    // Save the order so checkout.html can access it
+    localStorage.setItem('checkoutOrder', JSON.stringify(order));
+
+    // Hide cart
     const offcanvasEl = document.getElementById('cartOffcanvas');
     bootstrap.Offcanvas.getInstance(offcanvasEl)?.hide();
-    showToast(null, null, {
-      title: 'Order placed!',
-      sub: "We're firing up the grill — thanks for choosing X-Burger.",
-      icon: 'fa-solid fa-check'
-    });
-  });
+
+    // Go to checkout page
+    window.location.href = 'order.html';
+});
 
   /* ============================================================
      TOAST — nicer feedback than alert()
