@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Both Bootstrap builds are loaded; the tiny script right after picks the right one
+         BEFORE the page paints, so there's no flash of the wrong direction. -->
+    <link id="bootstrapLtr" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link id="bootstrapRtl" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.rtl.min.css" rel="stylesheet" crossorigin="anonymous">
+    <script>
+      (function () {
+        var savedLang = localStorage.getItem('xburger_lang') || 'ar';
+        var html = document.documentElement;
+        if (savedLang === 'ar') {
+          html.setAttribute('lang', 'ar');
+          html.setAttribute('dir', 'rtl');
+          document.getElementById('bootstrapLtr').disabled = true;
+        } else {
+          html.setAttribute('lang', 'en');
+          html.setAttribute('dir', 'ltr');
+          document.getElementById('bootstrapRtl').disabled = true;
+        }
+      })();
+    </script>
+
+    <link rel="stylesheet" href="Css/homepage.css">
+    <title>X-Burger | تسجيل الدخول</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Rubik+Spray+Paint&family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+      body {
+        background: #1A1A1A;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Roboto', sans-serif;
+      }
+
+      [dir="rtl"] body {
+        font-family: 'Cairo', sans-serif;
+      }
+
+      .register-card {
+        background: #FAFAFA;
+        border-radius: 18px;
+        padding: 40px;
+        width: 100%;
+        max-width: 420px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        position: relative;
+      }
+
+      .lang-toggle-btn {
+        position: absolute;
+        top: 18px;
+        left: 18px;
+        background: transparent;
+        border: 1px solid rgba(0,0,0,0.15);
+        color: #3D3D3D;
+        height: 34px;
+        padding: 0 12px;
+        border-radius: 30px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: background 0.2s ease, color 0.2s ease;
+      }
+
+      [dir="rtl"] .lang-toggle-btn {
+        left: auto;
+        right: 18px;
+      }
+
+      .lang-toggle-btn:hover {
+        background: #F0F0F0;
+        color: #C41E2A;
+      }
+
+      .register-card h2 {
+        color: #C41E2A;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 6px;
+        font-family: 'Archivo Black', sans-serif;
+      }
+
+      [dir="rtl"] .register-card h2 {
+        font-family: 'Cairo', sans-serif;
+        font-weight: 800;
+      }
+
+      .register-card p.subtitle {
+        text-align: center;
+        color: #3D3D3D;
+        margin-bottom: 24px;
+      }
+
+      .login-alert {
+        display: none;
+        align-items: center;
+        gap: 8px;
+        background: #FDECEC;
+        border: 1px solid #C41E2A;
+        color: #8B1420;
+        font-size: 0.82rem;
+        border-radius: 10px;
+        padding: 10px 12px;
+        margin-bottom: 20px;
+      }
+
+      .btn-register {
+        background: #F4B740;
+        border: none;
+        color: #1A1A1A;
+        font-weight: 600;
+        border-radius: 30px;
+        padding: 10px;
+      }
+
+      .btn-register:hover {
+        background: #E8792F;
+        color: #fff;
+      }
+
+      .form-control.is-invalid-custom {
+        border-color: #C41E2A;
+      }
+
+      .field-error {
+        color: #C41E2A;
+        font-size: 0.78rem;
+        margin-top: 4px;
+        display: none;
+      }
+
+      .password-field-wrapper {
+        position: relative;
+      }
+
+      .password-toggle-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        right: 12px;
+        background: none;
+        border: none;
+        color: #8A8A8A;
+        font-size: 0.9rem;
+      }
+
+      [dir="rtl"] .password-toggle-btn {
+        right: auto;
+        left: 12px;
+      }
+
+      .forgot-link-row {
+        text-align: right;
+        margin-top: -8px;
+        margin-bottom: 18px;
+        font-size: 0.82rem;
+      }
+
+      [dir="rtl"] .forgot-link-row {
+        text-align: left;
+      }
+
+      .forgot-link-row a {
+        color: #6B6255;
+        text-decoration: none;
+      }
+
+      .forgot-link-row a:hover {
+        color: #C41E2A;
+        text-decoration: underline;
+      }
+
+      a.back-link {
+        display: block;
+        text-align: center;
+        margin-top: 16px;
+        color: #3D3D3D;
+        text-decoration: none;
+        font-size: 14px;
+      }
+
+      a.back-link:hover {
+        color: #C41E2A;
+      }
+
+      .register-link-row {
+        text-align: center;
+        margin-top: 14px;
+        font-size: 0.85rem;
+        color: #3D3D3D;
+      }
+
+      .register-link-row a {
+        color: #C41E2A;
+        font-weight: 600;
+        text-decoration: none;
+      }
+
+      .register-link-row a:hover {
+        text-decoration: underline;
+      }
+
+      @media (max-width: 400px) {
+        .register-card { padding: 40px 24px 28px; }
+        .lang-toggle-btn span { display: none; }
+        .lang-toggle-btn { width: 34px; padding: 0; justify-content: center; }
+      }
+    </style>
+</head>
+<body>
+
+  <div class="register-card">
+    <button class="lang-toggle-btn" type="button" id="langToggleBtn" aria-label="Switch language">
+      <i class="fa-solid fa-globe"></i>
+      <span id="langToggleLabel">English</span>
+    </button>
+
+    <h2>X-Burger</h2>
+    <p class="subtitle" data-i18n="subtitle">سجّل دخولك عشان تكمّل طلبك</p>
+
+    <div class="login-alert" id="loginAlert">
+      <i class="fa-solid fa-circle-exclamation"></i>
+      <span id="loginAlertText"></span>
+    </div>
+
+    <form id="loginForm" novalidate>
+      <div class="mb-3">
+        <label for="loginPhone" class="form-label" data-i18n="label_phone">رقم الهاتف</label>
+        <input type="text" class="form-control" id="loginPhone" data-i18n-placeholder="placeholder_phone" placeholder="اكتب رقم هاتفك" required>
+        <div class="field-error" id="loginPhoneError" data-i18n="error_phone">من فضلك اكتب رقم هاتف صحيح.</div>
+      </div>
+      <div class="mb-2">
+        <label for="loginPassword" class="form-label" data-i18n="label_password">كلمة السر</label>
+        <div class="password-field-wrapper">
+          <input type="password" class="form-control" id="loginPassword" data-i18n-placeholder="placeholder_password" placeholder="اكتب كلمة السر" required>
+          <button type="button" class="password-toggle-btn" data-toggle-for="loginPassword" aria-label="Show password"><i class="fa-solid fa-eye"></i></button>
+        </div>
+        <div class="field-error" id="loginPasswordError" data-i18n="error_password_empty">من فضلك اكتب كلمة السر.</div>
+      </div>
+      <div class="forgot-link-row">
+        <a href="forgot-password.html" data-i18n="forgot_password_link">نسيت كلمة السر؟</a>
+      </div>
+      <button type="submit" class="btn btn-register w-100" data-i18n="submit_btn">تسجيل الدخول</button>
+    </form>
+
+    <p class="register-link-row">
+      <span data-i18n="no_account_text">لسه معملتش حساب؟</span>
+      <a href="register.html" data-i18n="register_link_text">اعمل حساب جديد</a>
+    </p>
+
+    <a href="index.html" class="back-link"><span id="backArrow">&rarr;</span> <span data-i18n="back_link">رجوع للقائمة</span></a>
+  </div>
+
+<script>
+  /* ============================================================
+     LANGUAGE / TRANSLATIONS (same pattern + storage key as index.html)
+  ============================================================ */
+  const translations = {
+    ar: {
+      subtitle: "سجّل دخولك عشان تكمّل طلبك",
+      label_phone: "رقم الهاتف",
+      placeholder_phone: "اكتب رقم هاتفك",
+      error_phone: "من فضلك اكتب رقم هاتف صحيح.",
+      label_password: "كلمة السر",
+      placeholder_password: "اكتب كلمة السر",
+      error_password_empty: "من فضلك اكتب كلمة السر.",
+      forgot_password_link: "نسيت كلمة السر؟",
+      submit_btn: "تسجيل الدخول",
+      no_account_text: "لسه معملتش حساب؟",
+      register_link_text: "اعمل حساب جديد",
+      back_link: "رجوع للقائمة",
+      lang_toggle_label: "English",
+      error_invalid_credentials: "رقم الهاتف أو كلمة السر غلط. جرّب تاني.",
+      info_password_reset: "تم تغيير كلمة السر بنجاح، سجّل دخولك بكلمة السر الجديدة."
+    },
+    en: {
+      subtitle: "Log in to continue your order",
+      label_phone: "Phone",
+      placeholder_phone: "Enter your phone number",
+      error_phone: "Please enter a valid phone number.",
+      label_password: "Password",
+      placeholder_password: "Enter your password",
+      error_password_empty: "Please enter your password.",
+      forgot_password_link: "Forgot password?",
+      submit_btn: "Log In",
+      no_account_text: "Don't have an account yet?",
+      register_link_text: "Create one",
+      back_link: "Back to Menu",
+      lang_toggle_label: "العربية",
+      error_invalid_credentials: "Incorrect phone number or password. Please try again.",
+      info_password_reset: "Your password was reset — log in with your new password."
+    }
+  };
+
+  function getCurrentLang() {
+    return localStorage.getItem('xburger_lang') || 'ar';
+  }
+
+  function applyLanguage(lang) {
+    const t = translations[lang];
+    const html = document.documentElement;
+    html.setAttribute('lang', lang);
+    html.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+    localStorage.setItem('xburger_lang', lang);
+
+    document.getElementById('bootstrapLtr').disabled = (lang === 'ar');
+    document.getElementById('bootstrapRtl').disabled = (lang !== 'ar');
+
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (t[key] !== undefined) el.textContent = t[key];
+    });
+
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+      const key = el.getAttribute('data-i18n-placeholder');
+      if (t[key] !== undefined) el.setAttribute('placeholder', t[key]);
+    });
+
+    const backArrow = document.getElementById('backArrow');
+    if (backArrow) backArrow.textContent = lang === 'ar' ? '\u2192' : '\u2190';
+
+    const langLabel = document.getElementById('langToggleLabel');
+    if (langLabel) langLabel.textContent = t.lang_toggle_label;
+  }
+
+  document.getElementById('langToggleBtn').addEventListener('click', function () {
+    const next = getCurrentLang() === 'ar' ? 'en' : 'ar';
+    applyLanguage(next);
+  });
+
+  applyLanguage(getCurrentLang());
+
+  /* If forgot-password.html just reset a password, say so */
+  if (sessionStorage.getItem('xburger_password_was_reset')) {
+    sessionStorage.removeItem('xburger_password_was_reset');
+    const t = translations[getCurrentLang()];
+    const alertBox = document.getElementById('loginAlert');
+    alertBox.style.display = 'flex';
+    alertBox.style.background = '#EAF7ED';
+    alertBox.style.borderColor = '#3FA34D';
+    alertBox.style.color = '#1F5C2A';
+    document.getElementById('loginAlertText').textContent = t.info_password_reset;
+  }
+
+  /* ============================================================
+     Show/hide password
+  ============================================================ */
+  document.querySelectorAll('.password-toggle-btn').forEach(btn => {
+    btn.addEventListener('click', function () {
+      const input = document.getElementById(this.dataset.toggleFor);
+      const icon = this.querySelector('i');
+      const isHidden = input.type === 'password';
+      input.type = isHidden ? 'text' : 'password';
+      icon.className = isHidden ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye';
+    });
+  });
+
+  /* ============================================================
+     ACCOUNTS STORE — same shape as register.html
+     (see the NOTE in register.html about demoHash being demo-only,
+     not real production-grade security)
+  ============================================================ */
+  function getUsers() {
+    try { return JSON.parse(localStorage.getItem('xburger_users') || '{}'); }
+    catch (e) { return {}; }
+  }
+
+  function normalizePhone(phone) {
+    return phone.replace(/\D/g, '');
+  }
+
+  function demoHash(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = (hash * 31 + str.charCodeAt(i)) >>> 0;
+    }
+    return hash.toString(36);
+  }
+
+  document.getElementById('loginForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const lang = getCurrentLang();
+    const t = translations[lang];
+
+    const phoneEl = document.getElementById('loginPhone');
+    const passwordEl = document.getElementById('loginPassword');
+    const phone = phoneEl.value.trim();
+    const password = passwordEl.value;
+
+    const phoneError = document.getElementById('loginPhoneError');
+    const passwordError = document.getElementById('loginPasswordError');
+
+    let valid = true;
+
+    if (!phone) {
+      phoneEl.classList.add('is-invalid-custom');
+      phoneError.style.display = 'block';
+      valid = false;
+    } else {
+      phoneEl.classList.remove('is-invalid-custom');
+      phoneError.style.display = 'none';
+    }
+
+    if (!password) {
+      passwordEl.classList.add('is-invalid-custom');
+      passwordError.style.display = 'block';
+      valid = false;
+    } else {
+      passwordEl.classList.remove('is-invalid-custom');
+      passwordError.style.display = 'none';
+    }
+
+    if (!valid) return;
+
+    const phoneDigits = normalizePhone(phone);
+    const users = getUsers();
+    const account = users[phoneDigits];
+
+    const alertBox = document.getElementById('loginAlert');
+
+    // Deliberately generic error — never say "no account with this phone"
+    // vs "wrong password" separately, so an attacker can't use this form
+    // to figure out which phone numbers have accounts.
+    if (!account || account.passwordHash !== demoHash(password)) {
+      alertBox.style.display = 'flex';
+      alertBox.style.background = '#FDECEC';
+      alertBox.style.borderColor = '#C41E2A';
+      alertBox.style.color = '#8B1420';
+      document.getElementById('loginAlertText').textContent = t.error_invalid_credentials;
+      return;
+    }
+
+    alertBox.style.display = 'none';
+
+    localStorage.setItem('xburger_user', JSON.stringify({ name: account.name, phone: account.phone }));
+
+    const redirectTo = sessionStorage.getItem('xburger_redirect_after_login');
+    sessionStorage.removeItem('xburger_redirect_after_login');
+    window.location.href = redirectTo || 'index.html#menu';
+  });
+</script>
+
+</body>
+</html>
