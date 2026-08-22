@@ -1,14 +1,36 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+
+    <!-- Both Bootstrap builds are loaded; the tiny script right after picks the right one
+         BEFORE the page paints, so there's no flash of the wrong direction. -->
+    <link id="bootstrapLtr" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link id="bootstrapRtl" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.rtl.min.css" rel="stylesheet" crossorigin="anonymous">
+    <script>
+      (function () {
+        var savedLang = localStorage.getItem('xburger_lang') || 'ar';
+        var html = document.documentElement;
+        if (savedLang === 'ar') {
+          html.setAttribute('lang', 'ar');
+          html.setAttribute('dir', 'rtl');
+          document.getElementById('bootstrapLtr').disabled = true;
+        } else {
+          html.setAttribute('lang', 'en');
+          html.setAttribute('dir', 'ltr');
+          document.getElementById('bootstrapRtl').disabled = true;
+        }
+      })();
+    </script>
+
     <link rel="stylesheet" href="Css/homepage.css">
-    <title>X-Burger | Sign Up</title>
+    <title>X-Burger | إنشاء حساب</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Rubik+Spray+Paint&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Rubik+Spray+Paint&family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     <style>
       body {
         background: #1A1A1A;
@@ -19,6 +41,10 @@
         font-family: 'Roboto', sans-serif;
       }
 
+      [dir="rtl"] body {
+        font-family: 'Cairo', sans-serif;
+      }
+
       .register-card {
         background: #FAFAFA;
         border-radius: 18px;
@@ -26,6 +52,35 @@
         width: 100%;
         max-width: 420px;
         box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        position: relative;
+      }
+
+      .lang-toggle-btn {
+        position: absolute;
+        top: 18px;
+        left: 18px;
+        background: transparent;
+        border: 1px solid rgba(0,0,0,0.15);
+        color: #3D3D3D;
+        height: 34px;
+        padding: 0 12px;
+        border-radius: 30px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: background 0.2s ease, color 0.2s ease;
+      }
+
+      [dir="rtl"] .lang-toggle-btn {
+        left: auto;
+        right: 18px;
+      }
+
+      .lang-toggle-btn:hover {
+        background: #F0F0F0;
+        color: #C41E2A;
       }
 
       .register-card h2 {
@@ -33,6 +88,12 @@
         font-weight: 700;
         text-align: center;
         margin-bottom: 6px;
+        font-family: 'Archivo Black', sans-serif;
+      }
+
+      [dir="rtl"] .register-card h2 {
+        font-family: 'Cairo', sans-serif;
+        font-weight: 800;
       }
 
       .register-card p.subtitle {
@@ -79,6 +140,26 @@
         display: none;
       }
 
+      .password-field-wrapper {
+        position: relative;
+      }
+
+      .password-toggle-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        right: 12px;
+        background: none;
+        border: none;
+        color: #8A8A8A;
+        font-size: 0.9rem;
+      }
+
+      [dir="rtl"] .password-toggle-btn {
+        right: auto;
+        left: 12px;
+      }
+
       a.back-link {
         display: block;
         text-align: center;
@@ -91,54 +172,251 @@
       a.back-link:hover {
         color: #C41E2A;
       }
+
+      .login-link-row {
+        text-align: center;
+        margin-top: 14px;
+        font-size: 0.85rem;
+        color: #3D3D3D;
+      }
+
+      .login-link-row a {
+        color: #C41E2A;
+        font-weight: 600;
+        text-decoration: none;
+      }
+
+      .login-link-row a:hover {
+        text-decoration: underline;
+      }
+
+      @media (max-width: 400px) {
+        .register-card { padding: 40px 24px 28px; }
+        .lang-toggle-btn span { display: none; }
+        .lang-toggle-btn { width: 34px; padding: 0; justify-content: center; }
+      }
     </style>
 </head>
 <body>
 
   <div class="register-card">
+    <button class="lang-toggle-btn" type="button" id="langToggleBtn" aria-label="Switch language">
+      <i class="fa-solid fa-globe"></i>
+      <span id="langToggleLabel">English</span>
+    </button>
+
     <h2>X-Burger</h2>
-    <p class="subtitle">Create an account to place your order</p>
+    <p class="subtitle" data-i18n="subtitle">أنشئ حساب عشان تقدر تطلب</p>
 
     <div class="register-note">
       <i class="fa-solid fa-circle-info"></i>
-      <span>You'll need an account to browse the menu and order — it only takes a few seconds.</span>
+      <span data-i18n="note">هتحتاج حساب عشان تتصفح القائمة وتطلب — الموضوع بياخد ثواني بس.</span>
     </div>
 
     <form id="registerForm" novalidate>
       <div class="mb-3">
-        <label for="regName" class="form-label">Name</label>
-        <input type="text" class="form-control" id="regName" placeholder="Enter your name" required>
-        <div class="field-error" id="regNameError">Please enter your name.</div>
+        <label for="regName" class="form-label" data-i18n="label_name">الاسم</label>
+        <input type="text" class="form-control" id="regName" data-i18n-placeholder="placeholder_name" placeholder="اكتب اسمك" required>
+        <div class="field-error" id="regNameError" data-i18n="error_name">من فضلك اكتب اسمك.</div>
       </div>
       <div class="mb-3">
-        <label for="regPhone" class="form-label">Phone</label>
-        <input type="text" class="form-control" id="regPhone" placeholder="Enter your phone number" required>
-        <div class="field-error" id="regPhoneError">Please enter a valid phone number.</div>
+        <label for="regPhone" class="form-label" data-i18n="label_phone">رقم الهاتف</label>
+        <input type="text" class="form-control" id="regPhone" data-i18n-placeholder="placeholder_phone" placeholder="اكتب رقم هاتفك" required>
+        <div class="field-error" id="regPhoneError" data-i18n="error_phone">من فضلك اكتب رقم هاتف صحيح.</div>
       </div>
-      <button type="submit" class="btn btn-register w-100">Sign Up & Continue</button>
+      <div class="mb-3">
+        <label for="regPassword" class="form-label" data-i18n="label_password">كلمة السر</label>
+        <div class="password-field-wrapper">
+          <input type="password" class="form-control" id="regPassword" data-i18n-placeholder="placeholder_password" placeholder="6 أحرف على الأقل" required>
+          <button type="button" class="password-toggle-btn" data-toggle-for="regPassword" aria-label="Show password"><i class="fa-solid fa-eye"></i></button>
+        </div>
+        <div class="field-error" id="regPasswordError" data-i18n="error_password_short">كلمة السر لازم تكون 6 حروف/أرقام على الأقل.</div>
+      </div>
+      <div class="mb-3">
+        <label for="regPasswordConfirm" class="form-label" data-i18n="label_password_confirm">تأكيد كلمة السر</label>
+        <div class="password-field-wrapper">
+          <input type="password" class="form-control" id="regPasswordConfirm" data-i18n-placeholder="placeholder_password_confirm" placeholder="اكتب كلمة السر تاني" required>
+          <button type="button" class="password-toggle-btn" data-toggle-for="regPasswordConfirm" aria-label="Show password"><i class="fa-solid fa-eye"></i></button>
+        </div>
+        <div class="field-error" id="regPasswordConfirmError" data-i18n="error_password_mismatch">كلمتا السر مش متطابقتين.</div>
+      </div>
+      <button type="submit" class="btn btn-register w-100" data-i18n="submit_btn">سجّل وكمّل</button>
     </form>
 
-    <a href="index.html" class="back-link">&larr; Back to Menu</a>
+    <p class="login-link-row">
+      <span data-i18n="have_account_text">عندك حساب بالفعل؟</span>
+      <a href="login.html" data-i18n="login_link_text">سجّل دخولك</a>
+    </p>
+
+    <a href="index.html" class="back-link"><span id="backArrow">&rarr;</span> <span data-i18n="back_link">رجوع للقائمة</span></a>
   </div>
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
 <script>
+  /* ============================================================
+     LANGUAGE / TRANSLATIONS (same pattern + storage key as index.html)
+  ============================================================ */
+  const translations = {
+    ar: {
+      subtitle: "أنشئ حساب عشان تقدر تطلب",
+      note: "هتحتاج حساب عشان تتصفح القائمة وتطلب — الموضوع بياخد ثواني بس.",
+      label_name: "الاسم",
+      placeholder_name: "اكتب اسمك",
+      error_name: "من فضلك اكتب اسمك.",
+      label_phone: "رقم الهاتف",
+      placeholder_phone: "اكتب رقم هاتفك",
+      error_phone: "من فضلك اكتب رقم هاتف صحيح.",
+      error_phone_exists: "الرقم ده مسجّل بحساب قبل كده. سجّل دخولك بدل ما تعمل حساب جديد.",
+      label_password: "كلمة السر",
+      placeholder_password: "6 أحرف على الأقل",
+      error_password_short: "كلمة السر لازم تكون 6 حروف/أرقام على الأقل.",
+      label_password_confirm: "تأكيد كلمة السر",
+      placeholder_password_confirm: "اكتب كلمة السر تاني",
+      error_password_mismatch: "كلمتا السر مش متطابقتين.",
+      submit_btn: "سجّل وكمّل",
+      have_account_text: "عندك حساب بالفعل؟",
+      login_link_text: "سجّل دخولك",
+      back_link: "رجوع للقائمة",
+      lang_toggle_label: "English"
+    },
+    en: {
+      subtitle: "Create an account to place your order",
+      note: "You'll need an account to browse the menu and order — it only takes a few seconds.",
+      label_name: "Name",
+      placeholder_name: "Enter your name",
+      error_name: "Please enter your name.",
+      label_phone: "Phone",
+      placeholder_phone: "Enter your phone number",
+      error_phone: "Please enter a valid phone number.",
+      error_phone_exists: "This phone number already has an account. Please log in instead.",
+      label_password: "Password",
+      placeholder_password: "At least 6 characters",
+      error_password_short: "Password must be at least 6 characters.",
+      label_password_confirm: "Confirm password",
+      placeholder_password_confirm: "Type your password again",
+      error_password_mismatch: "Passwords don't match.",
+      submit_btn: "Sign Up & Continue",
+      have_account_text: "Already have an account?",
+      login_link_text: "Log in",
+      back_link: "Back to Menu",
+      lang_toggle_label: "العربية"
+    }
+  };
+
+  function getCurrentLang() {
+    return localStorage.getItem('xburger_lang') || 'ar';
+  }
+
+  function applyLanguage(lang) {
+    const t = translations[lang];
+    const html = document.documentElement;
+    html.setAttribute('lang', lang);
+    html.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+    localStorage.setItem('xburger_lang', lang);
+
+    document.getElementById('bootstrapLtr').disabled = (lang === 'ar');
+    document.getElementById('bootstrapRtl').disabled = (lang !== 'ar');
+
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (t[key] !== undefined) el.textContent = t[key];
+    });
+
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+      const key = el.getAttribute('data-i18n-placeholder');
+      if (t[key] !== undefined) el.setAttribute('placeholder', t[key]);
+    });
+
+    const backArrow = document.getElementById('backArrow');
+    if (backArrow) backArrow.textContent = lang === 'ar' ? '\u2192' : '\u2190';
+
+    const langLabel = document.getElementById('langToggleLabel');
+    if (langLabel) langLabel.textContent = t.lang_toggle_label;
+  }
+
+  document.getElementById('langToggleBtn').addEventListener('click', function () {
+    const next = getCurrentLang() === 'ar' ? 'en' : 'ar';
+    applyLanguage(next);
+  });
+
+  applyLanguage(getCurrentLang());
+
+  /* ============================================================
+     Show/hide password toggles
+  ============================================================ */
+  document.querySelectorAll('.password-toggle-btn').forEach(btn => {
+    btn.addEventListener('click', function () {
+      const input = document.getElementById(this.dataset.toggleFor);
+      const icon = this.querySelector('i');
+      const isHidden = input.type === 'password';
+      input.type = isHidden ? 'text' : 'password';
+      icon.className = isHidden ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye';
+    });
+  });
+
+  /* ============================================================
+     ACCOUNTS STORE
+     'xburger_users' holds EVERY registered account, keyed by a
+     normalized (digits-only) phone number:
+       { "<phone>": { name, phone, passwordHash } }
+
+     'xburger_user' (singular) holds only the CURRENTLY logged-in
+     session, e.g. { name, phone } — this is what order.html/index.html
+     already read to know "is someone logged in right now".
+
+     NOTE — DEMO-ONLY SECURITY: demoHash() below is a simple, fast,
+     NON-cryptographic hash. It stops a password showing up in plain
+     text if someone opens devtools, but it is NOT safe for a real
+     production site. If you deploy this for real, move accounts and
+     password checks to a real backend and hash passwords server-side
+     with something like bcrypt/argon2 — never trust client-side
+     "hashing" for real security.
+  ============================================================ */
+  function getUsers() {
+    try { return JSON.parse(localStorage.getItem('xburger_users') || '{}'); }
+    catch (e) { return {}; }
+  }
+
+  function saveUsers(users) {
+    localStorage.setItem('xburger_users', JSON.stringify(users));
+  }
+
+  function normalizePhone(phone) {
+    return phone.replace(/\D/g, '');
+  }
+
+  function demoHash(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = (hash * 31 + str.charCodeAt(i)) >>> 0;
+    }
+    return hash.toString(36);
+  }
+
   document.getElementById('registerForm').addEventListener('submit', function (e) {
     e.preventDefault();
+    const lang = getCurrentLang();
+    const t = translations[lang];
 
     const nameEl = document.getElementById('regName');
     const phoneEl = document.getElementById('regPhone');
+    const passwordEl = document.getElementById('regPassword');
+    const passwordConfirmEl = document.getElementById('regPasswordConfirm');
+
     const name = nameEl.value.trim();
     const phone = phoneEl.value.trim();
+    const password = passwordEl.value;
+    const passwordConfirm = passwordConfirmEl.value;
 
     const nameError = document.getElementById('regNameError');
     const phoneError = document.getElementById('regPhoneError');
+    const passwordError = document.getElementById('regPasswordError');
+    const passwordConfirmError = document.getElementById('regPasswordConfirmError');
 
     let valid = true;
 
     if (!name) {
       nameEl.classList.add('is-invalid-custom');
+      nameError.textContent = t.error_name;
       nameError.style.display = 'block';
       valid = false;
     } else {
@@ -146,9 +424,17 @@
       nameError.style.display = 'none';
     }
 
-    const phoneDigits = phone.replace(/\D/g, '');
+    const phoneDigits = normalizePhone(phone);
+    const users = getUsers();
+
     if (!phone || phoneDigits.length < 8) {
       phoneEl.classList.add('is-invalid-custom');
+      phoneError.textContent = t.error_phone;
+      phoneError.style.display = 'block';
+      valid = false;
+    } else if (users[phoneDigits]) {
+      phoneEl.classList.add('is-invalid-custom');
+      phoneError.textContent = t.error_phone_exists;
       phoneError.style.display = 'block';
       valid = false;
     } else {
@@ -156,15 +442,38 @@
       phoneError.style.display = 'none';
     }
 
+    if (!password || password.length < 6) {
+      passwordEl.classList.add('is-invalid-custom');
+      passwordError.style.display = 'block';
+      valid = false;
+    } else {
+      passwordEl.classList.remove('is-invalid-custom');
+      passwordError.style.display = 'none';
+    }
+
+    if (!passwordConfirm || passwordConfirm !== password) {
+      passwordConfirmEl.classList.add('is-invalid-custom');
+      passwordConfirmError.style.display = 'block';
+      valid = false;
+    } else {
+      passwordConfirmEl.classList.remove('is-invalid-custom');
+      passwordConfirmError.style.display = 'none';
+    }
+
     if (!valid) return;
 
-    // save the "logged in" user — this is the only thing that unlocks the rest of the site
+    // save the new account into the accounts store...
+    users[phoneDigits] = { name, phone, passwordHash: demoHash(password) };
+    saveUsers(users);
+
+    // ...and log them in immediately (this is the only thing that
+    // unlocks the rest of the site)
     localStorage.setItem('xburger_user', JSON.stringify({ name, phone }));
 
-    // send them back to whatever page they were trying to reach before we gated them,
-    // or to the menu by default
-    const redirectTo = sessionStorage.getItem('xburger_redirect_after_register');
-    sessionStorage.removeItem('xburger_redirect_after_register');
+    // send them back to whatever page they were trying to reach before
+    // we gated them, or to the menu by default
+    const redirectTo = sessionStorage.getItem('xburger_redirect_after_login');
+    sessionStorage.removeItem('xburger_redirect_after_login');
     window.location.href = redirectTo || 'index.html#menu';
   });
 </script>
