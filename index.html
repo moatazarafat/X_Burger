@@ -1,15 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css " rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+
+    <!-- Both Bootstrap builds are loaded; the tiny script right after picks the right one
+         BEFORE the page paints, so there's no flash of the wrong direction. -->
+    <link id="bootstrapLtr" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link id="bootstrapRtl" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.rtl.min.css" rel="stylesheet" crossorigin="anonymous">
+    <script>
+      (function () {
+        var savedLang = localStorage.getItem('xburger_lang') || 'ar';
+        var html = document.documentElement;
+        if (savedLang === 'ar') {
+          html.setAttribute('lang', 'ar');
+          html.setAttribute('dir', 'rtl');
+          document.getElementById('bootstrapLtr').disabled = true;
+        } else {
+          html.setAttribute('lang', 'en');
+          html.setAttribute('dir', 'ltr');
+          document.getElementById('bootstrapRtl').disabled = true;
+        }
+      })();
+    </script>
+
     <link rel="stylesheet" href="Css/homepage.css">
     <title>X-Burger</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Rubik+Spray+Paint&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Rubik+Spray+Paint&family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
@@ -24,6 +44,10 @@
         overflow-x: hidden;
       }
 
+      [dir="rtl"] body {
+        font-family: 'Cairo', sans-serif;
+      }
+
       img {
         max-width: 100%;
       }
@@ -36,11 +60,30 @@
         letter-spacing: 0.5px;
       }
 
+      [dir="rtl"] h1,
+      [dir="rtl"] h2,
+      [dir="rtl"] h3,
+      [dir="rtl"] .navbar-brand,
+      [dir="rtl"] .Main p:first-of-type,
+      [dir="rtl"] .btn-warning,
+      [dir="rtl"] .ff {
+        font-family: 'Cairo', sans-serif;
+        font-weight: 800;
+        letter-spacing: 0;
+      }
+
       .nav-link,
       .card-title,
       .form-label,
       .card-price {
         font-family: 'Inter', sans-serif;
+      }
+
+      [dir="rtl"] .nav-link,
+      [dir="rtl"] .card-title,
+      [dir="rtl"] .form-label,
+      [dir="rtl"] .card-price {
+        font-family: 'Cairo', sans-serif;
       }
 
       .qus-subtitle {
@@ -49,6 +92,10 @@
         font-weight: 400;
         font-style: normal;
         font-variation-settings: 'wdth' 100;
+      }
+
+      [dir="rtl"] .qus-subtitle {
+        font-family: 'Cairo', sans-serif;
       }
 
       .menu-card {
@@ -114,14 +161,15 @@
         color: #fff;
       }
 
-      /* ---------- Cart icon in navbar ---------- */
-      .cart-btn {
+      /* ---------- Cart icon + language toggle + account control in navbar ---------- */
+      .cart-btn,
+      .lang-toggle-btn,
+      .account-btn {
         position: relative;
         background: transparent;
         border: none;
         color: #fff;
         font-size: 1.25rem;
-        width: 44px;
         height: 44px;
         border-radius: 50%;
         display: inline-flex;
@@ -131,9 +179,34 @@
         flex-shrink: 0;
       }
 
-      .cart-btn:hover {
+      .cart-btn {
+        width: 44px;
+      }
+
+      .lang-toggle-btn,
+      .account-btn {
+        width: auto;
+        padding: 0 14px;
+        border-radius: 30px;
+        border: 1px solid rgba(255,255,255,0.35);
+        font-size: 0.85rem;
+        font-weight: 600;
+        gap: 6px;
+      }
+
+      .cart-btn:hover,
+      .lang-toggle-btn:hover,
+      .account-btn:hover {
         background: rgba(255,255,255,0.12);
         color: #fff;
+      }
+
+      .account-btn i.fa-user {
+        font-size: 0.9rem;
+      }
+
+      #accountMenu .dropdown-menu {
+        min-width: 160px;
       }
 
       .cart-badge {
@@ -174,6 +247,11 @@
       #cartOffcanvas .offcanvas-title {
         font-family: 'Archivo Black', sans-serif;
         letter-spacing: 0.5px;
+      }
+
+      [dir="rtl"] #cartOffcanvas .offcanvas-title {
+        font-family: 'Cairo', sans-serif;
+        letter-spacing: 0;
       }
 
       .cart-item {
@@ -244,6 +322,11 @@
         margin-left: 6px;
         flex-shrink: 0;
         transition: color 0.15s ease;
+      }
+
+      [dir="rtl"] .cart-item-remove {
+        margin-left: 0;
+        margin-right: 6px;
       }
 
       .cart-item-remove:hover {
@@ -369,6 +452,12 @@
         letter-spacing: 0.5px;
       }
 
+      [dir="rtl"] .stats-banner__number {
+        font-family: 'Cairo', sans-serif;
+        font-weight: 800;
+        letter-spacing: 0;
+      }
+
       .stats-banner__label {
         font-family: 'Inter', sans-serif;
         font-size: 0.82rem;
@@ -376,6 +465,12 @@
         text-transform: uppercase;
         letter-spacing: 1.5px;
         margin-top: 10px;
+      }
+
+      [dir="rtl"] .stats-banner__label {
+        font-family: 'Cairo', sans-serif;
+        letter-spacing: 0;
+        text-transform: none;
       }
 
       .stats-banner__divider {
@@ -392,12 +487,8 @@
 
       /* =====================================================
          RESPONSIVE FIXES
-         (previously several sections used fixed heights /
-         fixed font sizes that broke on small screens)
       ===================================================== */
 
-      /* Hero: use dynamic viewport height so mobile browser
-         chrome doesn't clip the button; scale headline text */
       .hero-video {
         height: 100vh;
         height: 100dvh;
@@ -415,8 +506,6 @@
         white-space: normal;
       }
 
-      /* Menu section: was a hard-coded height:100vh which
-         clips the tabs/cards on phones — let it size to content */
       #menu {
         height: auto !important;
         min-height: 100vh;
@@ -433,7 +522,6 @@
         padding: 0.5rem 0.75rem;
       }
 
-      /* About / story section */
       .about img.abc {
         display: block;
         max-width: 100%;
@@ -450,21 +538,10 @@
         padding: 0 16px;
       }
 
-      .about .d br {
-        display: none;
-      }
-
-      @media (min-width: 768px) {
-        .about .d br {
-          display: inline;
-        }
-      }
-
       .about h3 {
         font-size: clamp(1.25rem, 4vw, 1.75rem);
       }
 
-      /* Stats banner tighter on small screens */
       @media (max-width: 576px) {
         .stats-banner {
           padding: 36px 0;
@@ -480,8 +557,6 @@
         }
       }
 
-      /* Menu card thumbnails: shrink a bit on very small screens
-         so two-per-row cards don't feel cramped */
       @media (max-width: 400px) {
         .menu-card .card-img-top {
           height: 120px;
@@ -492,16 +567,23 @@
         .card-price {
           font-size: 0.9rem;
         }
+        .lang-toggle-btn span,
+        .account-btn span {
+          display: none;
+        }
+        .lang-toggle-btn,
+        .account-btn {
+          width: 44px;
+          padding: 0;
+        }
       }
 
-      /* Navbar brand logo scales down on small screens */
       .navbar-brand img {
         width: 100px;
         max-width: 28vw;
         height: auto;
       }
 
-      /* Offcanvas cart: full width on very small screens */
       @media (max-width: 420px) {
         #cartOffcanvas {
           width: 100%;
@@ -517,6 +599,26 @@
       footer h3.ahmed {
         font-size: clamp(1.1rem, 4vw, 1.5rem);
       }
+
+      /* ---------- RTL layout adjustments ---------- */
+      [dir="rtl"] .navbar-overlay .nav-link,
+      [dir="rtl"] .navbar-overlay .navbar-brand,
+      [dir="rtl"] .navbar-overlay .x {
+        margin-left: 0;
+        margin-right: 20px;
+      }
+
+      [dir="rtl"] .abc {
+        float: left;
+        margin: 30px 30px 30px 10px;
+      }
+
+      @media (max-width: 768px) {
+        [dir="rtl"] .abc {
+          float: none;
+          margin: 20px auto;
+        }
+      }
     </style>
 </head>
 <body>
@@ -527,6 +629,11 @@
         </a>
 
         <div class="d-flex align-items-center order-lg-2">
+            <button class="lang-toggle-btn me-2" type="button" id="langToggleBtn" aria-label="Switch language">
+                <i class="fa-solid fa-globe"></i>
+                <span id="langToggleLabel">English</span>
+            </button>
+            <div id="accountControlWrapper" class="me-2"></div>
             <button class="cart-btn me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas" aria-controls="cartOffcanvas" aria-label="Open your order">
                 <i class="fa-solid fa-cart-shopping"></i>
                 <span class="cart-badge" id="cartBadge">0</span>
@@ -538,11 +645,11 @@
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
-                <li class="nav-item"><a class="nav-link" href="index.html#home">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="index.html#menu">Menu</a></li>
-                <li class="nav-item"><a class="nav-link" href="index.html#about">About</a></li>
-                <li class="nav-item"><a class="nav-link" href="index.html#contact">Contact</a></li>
-                <li class="nav-item"><a class="nav-link active" href="order.html">Your Order</a></li>
+                <li class="nav-item"><a class="nav-link" href="index.html#home" data-i18n="nav_home">الرئيسية</a></li>
+                <li class="nav-item"><a class="nav-link" href="index.html#menu" data-i18n="nav_menu">القائمة</a></li>
+                <li class="nav-item"><a class="nav-link" href="index.html#about" data-i18n="nav_about">من نحن</a></li>
+                <li class="nav-item"><a class="nav-link" href="index.html#contact" data-i18n="nav_contact">تواصل معنا</a></li>
+                <li class="nav-item"><a class="nav-link active" href="order.html" data-i18n="nav_order">طلبك</a></li>
             </ul>
         </div>
     </div>
@@ -551,7 +658,7 @@
 <!-- ---------- Cart / order dashboard (offcanvas) ---------- -->
 <div class="offcanvas offcanvas-end" tabindex="-1" id="cartOffcanvas" aria-labelledby="cartOffcanvasLabel">
   <div class="offcanvas-header">
-    <h5 class="offcanvas-title" id="cartOffcanvasLabel"><i class="fa-solid fa-cart-shopping me-2"></i>Your Order</h5>
+    <h5 class="offcanvas-title" id="cartOffcanvasLabel"><i class="fa-solid fa-cart-shopping me-2"></i><span data-i18n="cart_title">طلبك</span></h5>
     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
   </div>
   <div class="offcanvas-body d-flex flex-column">
@@ -560,11 +667,11 @@
     </div>
     <div class="cart-summary" id="cartSummary" style="display: none;">
       <div class="cart-total-row">
-        <span>Total</span>
-        <span id="cartTotal">0 EGP</span>
+        <span data-i18n="cart_total">الإجمالي</span>
+        <span id="cartTotal">0</span>
       </div>
-      <button class="btn-checkout" id="checkoutBtn">Checkout</button>
-      <button class="btn btn-link w-100 mt-2 text-secondary" id="clearCartBtn" style="text-decoration: none; font-size: 0.85rem;">Clear order</button>
+      <button class="btn-checkout" id="checkoutBtn" data-i18n="cart_checkout">إتمام الطلب</button>
+      <button class="btn btn-link w-100 mt-2 text-secondary" id="clearCartBtn" data-i18n="cart_clear" style="text-decoration: none; font-size: 0.85rem;">إفراغ الطلب</button>
     </div>
   </div>
 </div>
@@ -578,28 +685,28 @@
   </video>
   <div class="position-absolute top-0 start-0 w-100 h-100" style="background: rgba(0,0,0,0.45); z-index: -1;"></div>
   <div class="Main d-flex flex-column justify-content-center align-items-center h-100 text-center text-white px-3">
-Welcome to<p style="color: orange;">X-Burger</p>
-<p class="qus-subtitle">The Best Burgers in Qus</p>
+<span data-i18n="hero_welcome">أهلاً بك في</span><p style="color: orange;">X-Burger</p>
+<p class="qus-subtitle" data-i18n="hero_tagline">اجمد برجر في قوص</p>
 <a href="#menu">
 
   <button style="border-radius: 30px;" class="btn btn-warning btn-lg mt-3" onclick="window.location.href='#'">
-      Start Your Order <i class="fa-solid fa-arrow-right"></i>
+      <span data-i18n="hero_btn">ابدأ طلبك</span> <i class="fa-solid fa-arrow-left" id="heroArrowIcon"></i>
   </button>
 </a>
   </div>
 </div>
 
 <div id="menu" class=" py-5" style="background-repeat: no-repeat; background-size: cover;width: 100%; background-color: #2d2929;">
-  <h2 class="ff text-center mb-4">Menu</h2>
+  <h2 class="ff text-center mb-4" data-i18n="menu_title">قائمة الطعام</h2>
   <ul class="nav nav-tabs justify-content-center mb-4" id="menuTabs" role="tablist">
     <li class="nav-item" role="presentation">
-      <button class="nav-link active" id="burgers-tab" data-bs-toggle="tab" data-bs-target="#burgers-pane" type="button" role="tab" aria-controls="burgers-pane" aria-selected="true" style="color: orange;">Burgers</button>
+      <button class="nav-link active" id="burgers-tab" data-bs-toggle="tab" data-bs-target="#burgers-pane" type="button" role="tab" aria-controls="burgers-pane" aria-selected="true" style="color: orange;" data-i18n="tab_burgers">برجر</button>
     </li>
     <li class="nav-item" role="presentation">
-      <button class="nav-link" id="sides-tab" data-bs-toggle="tab" data-bs-target="#sides-pane" type="button" role="tab" aria-controls="sides-pane" aria-selected="false" style="color:orange;">Sides</button>
+      <button class="nav-link" id="sides-tab" data-bs-toggle="tab" data-bs-target="#sides-pane" type="button" role="tab" aria-controls="sides-pane" aria-selected="false" style="color:orange;" data-i18n="tab_sides">أطباق جانبية</button>
     </li>
     <li class="nav-item" role="presentation">
-      <button class="nav-link" id="drinks-tab" data-bs-toggle="tab" data-bs-target="#drinks-pane" type="button" role="tab" aria-controls="drinks-pane" aria-selected="false" style="color:orange;">Drinks</button>
+      <button class="nav-link" id="drinks-tab" data-bs-toggle="tab" data-bs-target="#drinks-pane" type="button" role="tab" aria-controls="drinks-pane" aria-selected="false" style="color:orange;" data-i18n="tab_drinks">مشروبات</button>
     </li>
   </ul>
 
@@ -610,11 +717,11 @@ Welcome to<p style="color: orange;">X-Burger</p>
       <div class="row g-4">
         <div class="col-6 col-md-4 col-lg-3">
           <div class="card menu-card h-100">
-            <img src="Photos/2024_retail_double-stack-cheeseburger_400x400.webp" class="card-img-top" alt="Classic Burger">
+            <img src="Photos/2024_retail_double-stack-cheeseburger_400x400.webp" class="card-img-top" data-i18n-alt="classic_burger" alt="برجر كلاسيك">
             <div class="card-body text-center">
-              <h5 class="card-title">Classic Burger</h5>
-              <p class="card-price">120 EGP</p>
-              <button class="btn btn-add-order mt-2" onclick="addToOrder('Classic Burger', '120 EGP', 'Photos/2024_retail_double-stack-cheeseburger_400x400.webp')">
+              <h5 class="card-title" data-i18n-item="classic_burger">برجر كلاسيك</h5>
+              <p class="card-price" data-i18n-price="classic_burger">120 جنيه</p>
+              <button class="btn btn-add-order mt-2" onclick="addToOrder('classic_burger')">
                 <i class="fa-solid fa-plus"></i>
               </button>
             </div>
@@ -622,11 +729,11 @@ Welcome to<p style="color: orange;">X-Burger</p>
         </div>
         <div class="col-6 col-md-4 col-lg-3">
           <div class="card menu-card h-100">
-            <img src="Photos/2019_df_retail_butter-burger_20912_600x600.webp" class="card-img-top" alt="Double Cheese Burger">
+            <img src="Photos/2019_df_retail_butter-burger_20912_600x600.webp" class="card-img-top" data-i18n-alt="double_cheese" alt="دبل تشيز">
             <div class="card-body text-center">
-              <h5 class="card-title">Double Cheese</h5>
-              <p class="card-price">160 EGP</p>
-              <button class="btn btn-add-order mt-2" onclick="addToOrder('Double Cheese', '160 EGP', 'Photos/2019_df_retail_butter-burger_20912_600x600.webp')">
+              <h5 class="card-title" data-i18n-item="double_cheese">دبل تشيز</h5>
+              <p class="card-price" data-i18n-price="double_cheese">160 جنيه</p>
+              <button class="btn btn-add-order mt-2" onclick="addToOrder('double_cheese')">
                 <i class="fa-solid fa-plus"></i>
               </button>
             </div>
@@ -634,11 +741,11 @@ Welcome to<p style="color: orange;">X-Burger</p>
         </div>
         <div class="col-6 col-md-4 col-lg-3">
           <div class="card menu-card h-100">
-            <img src="Photos/16961-bbq-pulled-pork-burger_400x400.webp" class="card-img-top" alt="BBQ Burger">
+            <img src="Photos/16961-bbq-pulled-pork-burger_400x400.webp" class="card-img-top" data-i18n-alt="bbq_burger" alt="برجر باربيكيو">
             <div class="card-body text-center">
-              <h5 class="card-title">BBQ Burger</h5>
-              <p class="card-price">150 EGP</p>
-              <button class="btn btn-add-order mt-2" onclick="addToOrder('BBQ Burger', '150 EGP', 'Photos/16961-bbq-pulled-pork-burger_400x400.webp')">
+              <h5 class="card-title" data-i18n-item="bbq_burger">برجر باربيكيو</h5>
+              <p class="card-price" data-i18n-price="bbq_burger">150 جنيه</p>
+              <button class="btn btn-add-order mt-2" onclick="addToOrder('bbq_burger')">
                 <i class="fa-solid fa-plus"></i>
               </button>
             </div>
@@ -651,11 +758,11 @@ Welcome to<p style="color: orange;">X-Burger</p>
       <div class="row g-4">
         <div class="col-6 col-md-4 col-lg-3">
           <div class="card menu-card h-100">
-            <img src="Photos/images.jpg" class="card-img-top" alt="French Fries">
+            <img src="Photos/images.jpg" class="card-img-top" data-i18n-alt="french_fries" alt="بطاطس مقلية">
             <div class="card-body text-center">
-              <h5 class="card-title">French Fries</h5>
-              <p class="card-price">40 EGP</p>
-              <button class="btn btn-add-order mt-2" onclick="addToOrder('French Fries', '40 EGP', 'Photos/images.jpg')">
+              <h5 class="card-title" data-i18n-item="french_fries">بطاطس مقلية</h5>
+              <p class="card-price" data-i18n-price="french_fries">40 جنيه</p>
+              <button class="btn btn-add-order mt-2" onclick="addToOrder('french_fries')">
                 <i class="fa-solid fa-plus"></i>
               </button>
             </div>
@@ -668,11 +775,11 @@ Welcome to<p style="color: orange;">X-Burger</p>
       <div class="row g-4">
         <div class="col-6 col-md-4 col-lg-3">
           <div class="card menu-card h-100">
-            <img src="Photos/coca-cola-pouring-moment-stockcake.jpg" class="card-img-top w-100" alt="Cola">
+            <img src="Photos/coca-cola-pouring-moment-stockcake.jpg" class="card-img-top w-100" data-i18n-alt="cola" alt="كولا">
             <div class="card-body text-center">
-              <h5 class="card-title">Cola</h5>
-              <p class="card-price">20 EGP</p>
-              <button class="btn btn-add-order mt-2" onclick="addToOrder('Cola', '20 EGP', 'Photos/coca-cola-pouring-moment-stockcake.jpg')">
+              <h5 class="card-title" data-i18n-item="cola">كولا</h5>
+              <p class="card-price" data-i18n-price="cola">20 جنيه</p>
+              <button class="btn btn-add-order mt-2" onclick="addToOrder('cola')">
                 <i class="fa-solid fa-plus"></i>
               </button>
             </div>
@@ -680,11 +787,11 @@ Welcome to<p style="color: orange;">X-Burger</p>
         </div>
         <div class="col-6 col-md-4 col-lg-3">
           <div class="card menu-card h-100">
-            <img src="Photos/lemonada_22_5716846e-edc5-4c25-9a21-d1c2a7ba13d2.webp" class="card-img-top w-100" alt="Fresh Lemonade">
+            <img src="Photos/lemonada_22_5716846e-edc5-4c25-9a21-d1c2a7ba13d2.webp" class="card-img-top w-100" data-i18n-alt="lemonade" alt="ليمون فريش">
             <div class="card-body text-center">
-              <h5 class="card-title">Fresh Lemonade</h5>
-              <p class="card-price">30 EGP</p>
-              <button class="btn btn-add-order mt-2" onclick="addToOrder('Fresh Lemonade', '30 EGP', 'Photos/lemonada_22_5716846e-edc5-4c25-9a21-d1c2a7ba13d2.webp')">
+              <h5 class="card-title" data-i18n-item="lemonade">ليمون فريش</h5>
+              <p class="card-price" data-i18n-price="lemonade">30 جنيه</p>
+              <button class="btn btn-add-order mt-2" onclick="addToOrder('lemonade')">
                 <i class="fa-solid fa-plus"></i>
               </button>
             </div>
@@ -698,28 +805,24 @@ Welcome to<p style="color: orange;">X-Burger</p>
 </div>
 <div class="about" style="background-color: #2D2929;" id="about">
   <div class="stats-banner">
-    <b><h3 style="color: white;padding: 10px; margin: 10px;">Our Story : </h3></b>
+    <b><h3 style="color: white;padding: 10px; margin: 10px;" data-i18n="about_title">قصتنا :</h3></b>
     <img src="Photos/565340549_122101943919069236_403367878077486836_n.jpg" alt="" class="abc">
-  <p class="d">
-    X-Burger started with one simple idea: Qus deserves burgers worth driving for. <br> Every patty is grilled fresh to order, every bun is toasted, and every sauce is made in-house — <br> no shortcuts, no frozen mystery meat.Whether you're grabbing a quick bite between errands or feeding the whole family, <br> we treat every order like it's the only one we're making that day.
-
-From our classic cheeseburger to our BBQ favorite, <br> it's all built the same way: fresh, fast, and genuinely good. Come taste why we're Qus's favorite.
-  </p>
+  <p class="d" id="aboutParagraph"></p>
         <div class="container" style="padding: 10px;margin: 30px auto;">
             <div class="stats-banner__inner">
                 <div class="stats-banner__item">
                     <span class="stats-banner__number" data-target="110" data-suffix="+">0</span>
-                    <span class="stats-banner__label">Happy Customers</span>
+                    <span class="stats-banner__label" data-i18n="stat_customers">عملاء سعداء</span>
                 </div>
                 <div class="stats-banner__divider"></div>
                 <div class="stats-banner__item">
                     <span class="stats-banner__number" data-target="15" data-suffix="+">0</span>
-                    <span class="stats-banner__label">Menu Items</span>
+                    <span class="stats-banner__label" data-i18n="stat_items">عناصر القائمة</span>
                 </div>
                 <div class="stats-banner__divider"></div>
                 <div class="stats-banner__item">
                     <span class="stats-banner__number" data-target="99" data-suffix="%">0</span>
-                    <span class="stats-banner__label">Satisfaction</span>
+                    <span class="stats-banner__label" data-i18n="stat_satisfaction">نسبة الرضا</span>
                 </div>
             </div>
         </div>
@@ -731,7 +834,8 @@ From our classic cheeseburger to our BBQ favorite, <br> it's all built the same 
 
 <footer>
     <h3 class="ahmed"><b>X-Burger</b></h3>
-    <p>&copy; 2026 XBurger. All rights reserved.</p>
+    <p data-i18n="footer_rights">© 2026 إكس برجر. جميع الحقوق محفوظة.</p>
+    <p>Developed By Eng / <a href="https://www.linkedin.com/in/moataz-arafat-13a27435a/" target="_blank" title="Go to Moataz Profile" style="text-decoration: none;color: #E8792F;">Moataz Arafat</a></p>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
@@ -781,16 +885,208 @@ From our classic cheeseburger to our BBQ favorite, <br> it's all built the same 
 
   /* ============================================================
      AUTH
+     'xburger_user' = the CURRENTLY logged-in session, e.g. { name, phone }.
+     Accounts themselves (with password hashes) live in 'xburger_users'
+     and are only touched by register.html / login.html / forgot-password.html.
   ============================================================ */
   function isLoggedIn() {
     return localStorage.getItem('xburger_user') !== null;
   }
 
+  function getRegisteredUser() {
+    try { return JSON.parse(localStorage.getItem('xburger_user') || 'null'); }
+    catch (e) { return null; }
+  }
+
+  function logout() {
+    localStorage.removeItem('xburger_user');
+    renderAccountControl();
+    const lang = getCurrentLang();
+    showToast(null, null, {
+      title: translations[lang].toast_logged_out_title,
+      sub: translations[lang].toast_logged_out_sub,
+      icon: 'fa-solid fa-right-from-bracket'
+    });
+  }
+
+  function renderAccountControl() {
+    const lang = getCurrentLang();
+    const t = translations[lang];
+    const wrapper = document.getElementById('accountControlWrapper');
+    const user = getRegisteredUser();
+
+    if (user) {
+      const firstName = (user.name || '').trim().split(/\s+/)[0] || user.name;
+      wrapper.innerHTML = `
+        <div class="dropdown">
+          <button class="account-btn dropdown-toggle" type="button" id="accountToggleBtn" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fa-solid fa-circle-user"></i>
+            <span>${firstName}</span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end" id="accountMenu" aria-labelledby="accountToggleBtn">
+            <li><button class="dropdown-item" type="button" id="logoutMenuBtn"><i class="fa-solid fa-right-from-bracket me-2"></i>${t.nav_logout}</button></li>
+          </ul>
+        </div>`;
+      document.getElementById('logoutMenuBtn').addEventListener('click', logout);
+    } else {
+      wrapper.innerHTML = `<a href="login.html" class="account-btn"><i class="fa-solid fa-circle-user"></i><span>${t.nav_login}</span></a>`;
+    }
+  }
+
   /* ============================================================
-     CART (order) — items stored as { name, price, image, qty }
+     LANGUAGE / TRANSLATIONS
+  ============================================================ */
+  const translations = {
+    ar: {
+      nav_home: "الرئيسية",
+      nav_menu: "القائمة",
+      nav_about: "من نحن",
+      nav_contact: "تواصل معنا",
+      nav_order: "طلبك",
+      nav_login: "تسجيل الدخول",
+      nav_logout: "تسجيل الخروج",
+      toast_logged_out_title: "تم تسجيل الخروج",
+      toast_logged_out_sub: "تقدر تسجّل دخولك تاني في أي وقت.",
+      hero_welcome: "أهلاً بك في",
+      hero_tagline: "أجمد برجر في قوص",
+      hero_btn: "ابدأ طلبك",
+      menu_title: "قائمة الطعام",
+      tab_burgers: "برجر",
+      tab_sides: "أطباق جانبية",
+      tab_drinks: "مشروبات",
+      cart_title: "طلبك",
+      cart_empty_title: "طلبك فارغ.",
+      cart_empty_sub: "أضف شيئاً لذيذاً من القائمة.",
+      cart_total: "الإجمالي",
+      cart_checkout: "إتمام الطلب",
+      cart_clear: "إفراغ الطلب",
+      price_suffix: "جنيه",
+      price_each: "جنيه للقطعة",
+      toast_added_title: "أُضيف إلى طلبك",
+      toast_added_sub_prefix: "",
+      toast_added_sub_suffix: " في عربة التسوق.",
+      about_title: "قصتنا :",
+      about_p: "X Burger بدأ من حاجة بسيطة: كنا عايزين نقدم برجر طعمه حلو ويتعمل صح. بنجهز البرجر وقت الطلب، والعيش بيتحمص، والصوصات بنعملها عندنا، عشان كل حاجة توصل لك طازة وبطعم كويس. عندنا الشيز برجر، الباربيكيو، واختيارات تانية تناسب لو عايز وجبة سريعة أو خارج تاكل مع أصحابك وعيلتك. لو أنت في قوص، جرب X Burger وخلي طعم البرجر هو اللي يحكم.",
+      stat_customers: "عملاء سعداء",
+      stat_items: "عناصر القائمة",
+      stat_satisfaction: "نسبة الرضا",
+      footer_rights: "© 2026 إكس برجر. جميع الحقوق محفوظة.",
+      lang_toggle_label: "English"
+    },
+    en: {
+      nav_home: "Home",
+      nav_menu: "Menu",
+      nav_about: "About",
+      nav_contact: "Contact",
+      nav_order: "Your Order",
+      nav_login: "Log In",
+      nav_logout: "Log Out",
+      toast_logged_out_title: "Logged out",
+      toast_logged_out_sub: "You can log back in any time.",
+      hero_welcome: "Welcome to",
+      hero_tagline: "The Best Burgers in Qus",
+      hero_btn: "Start Your Order",
+      menu_title: "Menu",
+      tab_burgers: "Burgers",
+      tab_sides: "Sides",
+      tab_drinks: "Drinks",
+      cart_title: "Your Order",
+      cart_empty_title: "Your order is empty.",
+      cart_empty_sub: "Add something delicious from the menu.",
+      cart_total: "Total",
+      cart_checkout: "Checkout",
+      cart_clear: "Clear order",
+      price_suffix: "EGP",
+      price_each: "EGP each",
+      toast_added_title: "Added to your order",
+      toast_added_sub_prefix: "",
+      toast_added_sub_suffix: " is in your cart.",
+      about_title: "Our Story :",
+      about_p: "X-Burger started with one simple idea: Qus deserves burgers worth driving for. Every patty is grilled fresh to order, every bun is toasted, and every sauce is made in-house — no shortcuts, no frozen mystery meat. Whether you're grabbing a quick bite between errands or feeding the whole family, we treat every order like it's the only one we're making that day.\n\nFrom our classic cheeseburger to our BBQ favorite, it's all built the same way: fresh, fast, and genuinely good. Come taste why we're Qus's favorite.",
+      stat_customers: "Happy Customers",
+      stat_items: "Menu Items",
+      stat_satisfaction: "Satisfaction",
+      footer_rights: "© 2026 XBurger. All rights reserved.",
+      lang_toggle_label: "العربية"
+    }
+  };
+
+  const menuItems = {
+    classic_burger: { en: "Classic Burger", ar: "برجر كلاسيك", price: 120, img: "Photos/2024_retail_double-stack-cheeseburger_400x400.webp" },
+    double_cheese: { en: "Double Cheese", ar: "دبل تشيز", price: 160, img: "Photos/2019_df_retail_butter-burger_20912_600x600.webp" },
+    bbq_burger: { en: "BBQ Burger", ar: "برجر باربيكيو", price: 150, img: "Photos/16961-bbq-pulled-pork-burger_400x400.webp" },
+    french_fries: { en: "French Fries", ar: "بطاطس مقلية", price: 40, img: "Photos/images.jpg" },
+    cola: { en: "Cola", ar: "كولا", price: 20, img: "Photos/coca-cola-pouring-moment-stockcake.jpg" },
+    lemonade: { en: "Fresh Lemonade", ar: "ليمون فريش", price: 30, img: "Photos/lemonada_22_5716846e-edc5-4c25-9a21-d1c2a7ba13d2.webp" }
+  };
+
+  function getCurrentLang() {
+    return localStorage.getItem('xburger_lang') || 'ar';
+  }
+
+  function formatPrice(amount, lang, withEach) {
+    const suffix = withEach ? translations[lang].price_each : translations[lang].price_suffix;
+    return amount + ' ' + suffix;
+  }
+
+  function applyLanguage(lang) {
+    const t = translations[lang];
+    const html = document.documentElement;
+    html.setAttribute('lang', lang);
+    html.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+    localStorage.setItem('xburger_lang', lang);
+
+    document.getElementById('bootstrapLtr').disabled = (lang === 'ar');
+    document.getElementById('bootstrapRtl').disabled = (lang !== 'ar');
+
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (t[key] !== undefined) el.textContent = t[key];
+    });
+
+    document.querySelectorAll('[data-i18n-item]').forEach(el => {
+      const key = el.getAttribute('data-i18n-item');
+      if (menuItems[key]) el.textContent = menuItems[key][lang];
+    });
+
+    document.querySelectorAll('[data-i18n-price]').forEach(el => {
+      const key = el.getAttribute('data-i18n-price');
+      if (menuItems[key]) el.textContent = formatPrice(menuItems[key].price, lang, false);
+    });
+
+    document.querySelectorAll('[data-i18n-alt]').forEach(el => {
+      const key = el.getAttribute('data-i18n-alt');
+      if (menuItems[key]) el.setAttribute('alt', menuItems[key][lang]);
+    });
+
+    const aboutP = document.getElementById('aboutParagraph');
+    if (aboutP) {
+      aboutP.innerHTML = t.about_p.split('\n\n').map(p => p).join('<br><br>');
+    }
+
+    const heroArrow = document.getElementById('heroArrowIcon');
+    if (heroArrow) {
+      heroArrow.className = lang === 'ar' ? 'fa-solid fa-arrow-left' : 'fa-solid fa-arrow-right';
+    }
+
+    const langLabel = document.getElementById('langToggleLabel');
+    if (langLabel) langLabel.textContent = t.lang_toggle_label;
+
+    renderAccountControl();
+    renderCart();
+  }
+
+  document.getElementById('langToggleBtn').addEventListener('click', function () {
+    const next = getCurrentLang() === 'ar' ? 'en' : 'ar';
+    applyLanguage(next);
+  });
+
+  /* ============================================================
+     CART (order) — items stored as { key, qty }
   ============================================================ */
   function getOrder() {
-    return JSON.parse(localStorage.getItem('xburger_order') || '[]');
+    const order = JSON.parse(localStorage.getItem('xburger_order') || '[]');
+    return order.filter(item => item && item.key && menuItems[item.key]);
   }
 
   function saveOrder(order) {
@@ -799,40 +1095,39 @@ From our classic cheeseburger to our BBQ favorite, <br> it's all built the same 
     renderCart();
   }
 
-  function priceToNumber(priceStr) {
-    return parseInt(String(priceStr).replace(/[^\d]/g, ''), 10) || 0;
-  }
+  function addToOrder(key) {
+    if (!menuItems[key]) return;
 
-  function addToOrder(name, price, image) {
     if (!isLoggedIn()) {
-      // save what the user was trying to add, then send to register page
-      sessionStorage.setItem('xburger_pending_item', JSON.stringify({ name, price, image }));
-      window.location.href = 'register.html';
+      sessionStorage.setItem('xburger_pending_item', JSON.stringify({ key }));
+      sessionStorage.setItem('xburger_redirect_after_login', 'index.html#menu');
+      window.location.href = 'login.html';
       return;
     }
 
     const order = getOrder();
-    const existing = order.find(item => item.name === name);
+    const existing = order.find(item => item.key === key);
     if (existing) {
       existing.qty += 1;
     } else {
-      order.push({ name, price, image: image || '', qty: 1 });
+      order.push({ key, qty: 1 });
     }
     saveOrder(order);
-    showToast(name, image);
+    const lang = getCurrentLang();
+    showToast(menuItems[key][lang], menuItems[key].img);
   }
 
-  function changeQty(name, delta) {
+  function changeQty(key, delta) {
     const order = getOrder();
-    const item = order.find(i => i.name === name);
+    const item = order.find(i => i.key === key);
     if (!item) return;
     item.qty += delta;
-    const filtered = item.qty <= 0 ? order.filter(i => i.name !== name) : order;
+    const filtered = item.qty <= 0 ? order.filter(i => i.key !== key) : order;
     saveOrder(filtered);
   }
 
-  function removeFromOrder(name) {
-    const order = getOrder().filter(i => i.name !== name);
+  function removeFromOrder(key) {
+    const order = getOrder().filter(i => i.key !== key);
     saveOrder(order);
   }
 
@@ -849,6 +1144,8 @@ From our classic cheeseburger to our BBQ favorite, <br> it's all built the same 
   }
 
   function renderCart() {
+    const lang = getCurrentLang();
+    const t = translations[lang];
     const order = getOrder();
     const wrapper = document.getElementById('cartItemsWrapper');
     const summary = document.getElementById('cartSummary');
@@ -857,7 +1154,7 @@ From our classic cheeseburger to our BBQ favorite, <br> it's all built the same 
       wrapper.innerHTML = `
         <div class="cart-empty">
           <i class="fa-solid fa-burger"></i>
-          <p class="mb-0">Your order is empty.<br>Add something delicious from the menu.</p>
+          <p class="mb-0">${t.cart_empty_title}<br>${t.cart_empty_sub}</p>
         </div>`;
       summary.style.display = 'none';
       return;
@@ -865,32 +1162,34 @@ From our classic cheeseburger to our BBQ favorite, <br> it's all built the same 
 
     let total = 0;
     wrapper.innerHTML = order.map(item => {
-      const unit = priceToNumber(item.price);
+      const data = menuItems[item.key];
+      const unit = data.price;
       const lineTotal = unit * item.qty;
       total += lineTotal;
-      const imgTag = item.image
-        ? `<img src="${item.image}" class="cart-item-thumb" alt="${item.name}">`
+      const name = data[lang];
+      const imgTag = data.img
+        ? `<img src="${data.img}" class="cart-item-thumb" alt="${name}">`
         : `<div class="cart-item-thumb d-flex align-items-center justify-content-center"><i class="fa-solid fa-burger text-secondary"></i></div>`;
 
       return `
         <div class="cart-item">
           ${imgTag}
           <div class="flex-grow-1">
-            <div class="cart-item-name">${item.name}</div>
-            <div class="cart-item-unit-price">${unit} EGP each</div>
+            <div class="cart-item-name">${name}</div>
+            <div class="cart-item-unit-price">${formatPrice(unit, lang, true)}</div>
           </div>
           <div class="qty-control">
-            <button onclick="changeQty('${item.name.replace(/'/g, "\\'")}', -1)" aria-label="Decrease quantity">−</button>
+            <button onclick="changeQty('${item.key}', -1)" aria-label="Decrease quantity">−</button>
             <span>${item.qty}</span>
-            <button onclick="changeQty('${item.name.replace(/'/g, "\\'")}', 1)" aria-label="Increase quantity">+</button>
+            <button onclick="changeQty('${item.key}', 1)" aria-label="Increase quantity">+</button>
           </div>
-          <button class="cart-item-remove" onclick="removeFromOrder('${item.name.replace(/'/g, "\\'")}')" aria-label="Remove ${item.name}">
+          <button class="cart-item-remove" onclick="removeFromOrder('${item.key}')" aria-label="Remove ${name}">
             <i class="fa-solid fa-trash-can"></i>
           </button>
         </div>`;
     }).join('');
 
-    document.getElementById('cartTotal').textContent = total + ' EGP';
+    document.getElementById('cartTotal').textContent = formatPrice(total, lang, false);
     summary.style.display = 'block';
   }
 
@@ -916,10 +1215,12 @@ document.getElementById('checkoutBtn').addEventListener('click', function () {
      TOAST — nicer feedback than alert()
   ============================================================ */
   function showToast(itemName, itemImage, opts) {
+    const lang = getCurrentLang();
+    const t = translations[lang];
     const container = document.getElementById('xburgerToastContainer');
 
-    const title = opts?.title || 'Added to your order';
-    const sub = opts?.sub || (itemName ? `${itemName} is in your cart.` : '');
+    const title = opts?.title || t.toast_added_title;
+    const sub = opts?.sub || (itemName ? `${t.toast_added_sub_prefix}${itemName}${t.toast_added_sub_suffix}` : '');
     const iconClass = opts?.icon || 'fa-solid fa-plus';
 
     const toastEl = document.createElement('div');
@@ -983,25 +1284,31 @@ document.getElementById('checkoutBtn').addEventListener('click', function () {
      INIT
   ============================================================ */
   document.addEventListener('DOMContentLoaded', function () {
+    applyLanguage(getCurrentLang());
     updateCartBadge();
-    renderCart();
 
-    // if the user just came back from registering, add the pending item automatically
+    // if the user just came back from logging in/registering, add the
+    // pending item automatically
     const pending = sessionStorage.getItem('xburger_pending_item');
     if (pending && isLoggedIn()) {
-      const item = JSON.parse(pending);
-      const order = getOrder();
-      const existing = order.find(i => i.name === item.name);
-      if (existing) {
-        existing.qty += 1;
-      } else {
-        order.push({ name: item.name, price: item.price, image: item.image || '', qty: 1 });
+      const { key } = JSON.parse(pending);
+      if (menuItems[key]) {
+        const order = getOrder();
+        const existing = order.find(i => i.key === key);
+        if (existing) {
+          existing.qty += 1;
+        } else {
+          order.push({ key, qty: 1 });
+        }
+        saveOrder(order);
+        sessionStorage.removeItem('xburger_pending_item');
+        const lang = getCurrentLang();
+        showToast(menuItems[key][lang], menuItems[key].img);
       }
-      saveOrder(order);
-      sessionStorage.removeItem('xburger_pending_item');
-      showToast(item.name, item.image);
     }
   });
 </script>
+<script src="//code.tidio.co/YOURPUBLICKEY.js" async></script>
+
 </body>
 </html>
