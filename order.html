@@ -1,16 +1,45 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Order - X-Burger</title>
+
+    <!-- Both Bootstrap builds are loaded; the tiny script right after picks the right one
+         BEFORE the page paints, so there's no flash of the wrong direction. -->
+    <link id="bootstrapLtr" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link id="bootstrapRtl" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.rtl.min.css" rel="stylesheet" crossorigin="anonymous">
+    <script>
+      (function () {
+        var savedLang = localStorage.getItem('xburger_lang') || 'ar';
+        var html = document.documentElement;
+        if (savedLang === 'ar') {
+          html.setAttribute('lang', 'ar');
+          html.setAttribute('dir', 'rtl');
+          document.getElementById('bootstrapLtr').disabled = true;
+        } else {
+          html.setAttribute('lang', 'en');
+          html.setAttribute('dir', 'ltr');
+          document.getElementById('bootstrapRtl').disabled = true;
+        }
+
+        // Guard: order.html needs someone logged in (delivery name/phone
+        // are pulled from the account, and payment is tied to it too).
+        // Bounce to login.html immediately, before the page paints, and
+        // remember to send them right back here afterwards.
+        if (localStorage.getItem('xburger_user') === null) {
+          sessionStorage.setItem('xburger_redirect_after_login', 'order.html');
+          window.location.replace('login.html');
+        }
+      })();
+    </script>
+
+    <title>طلبك - X-Burger</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Rubik+Spray+Paint&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Rubik+Spray+Paint&family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 
     <style>
         * { margin: 0; padding: 0; }
@@ -22,6 +51,10 @@
             background: #FFF6EC;
         }
 
+        [dir="rtl"] body {
+            font-family: 'Cairo', sans-serif;
+        }
+
         img { max-width: 100%; }
 
         h1, h2, h3, .navbar-brand, .btn-warning, .stub-total .amount {
@@ -29,7 +62,26 @@
             letter-spacing: 0.5px;
         }
 
+        [dir="rtl"] h1,
+        [dir="rtl"] h2,
+        [dir="rtl"] h3,
+        [dir="rtl"] .navbar-brand,
+        [dir="rtl"] .btn-warning,
+        [dir="rtl"] .stub-total .amount,
+        [dir="rtl"] .panel-title,
+        [dir="rtl"] .ticket-head h3 {
+            font-family: 'Cairo', sans-serif;
+            font-weight: 800;
+            letter-spacing: 0;
+        }
+
         .nav-link, .card-title, .form-label { font-family: 'Inter', sans-serif; }
+
+        [dir="rtl"] .nav-link,
+        [dir="rtl"] .card-title,
+        [dir="rtl"] .form-label {
+            font-family: 'Cairo', sans-serif;
+        }
 
         .qus-subtitle {
             font-family: 'Roboto', sans-serif;
@@ -38,9 +90,18 @@
             font-variation-settings: 'wdth' 100;
         }
 
+        [dir="rtl"] .qus-subtitle {
+            font-family: 'Cairo', sans-serif;
+        }
+
         .stamp {
             font-family: 'Rubik Spray Paint', cursive;
             color: #D64541;
+        }
+
+        [dir="rtl"] .stamp {
+            font-family: 'Cairo', sans-serif;
+            font-weight: 800;
         }
 
         /* ---------- Navbar (reused, now solid since this is an interior page) ---------- */
@@ -52,9 +113,41 @@
             color: #FFF6EC !important;
             margin-left: 20px;
         }
+        [dir="rtl"] .navbar-overlay .nav-link,
+        [dir="rtl"] .navbar-overlay .navbar-brand {
+            margin-left: 0;
+            margin-right: 20px;
+        }
         .navbar-overlay .nav-link.active { color: #F4B740 !important; font-weight: 600; }
         .navbar-overlay .nav-link:hover { color: #F4B740 !important; }
         .navbar-overlay .navbar-toggler-icon { filter: invert(1); }
+
+        .lang-toggle-btn,
+        .account-btn {
+            position: relative;
+            background: transparent;
+            border: 1px solid rgba(255,246,236,0.35);
+            color: #FFF6EC;
+            height: 38px;
+            width: auto;
+            padding: 0 14px;
+            border-radius: 30px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.2s ease;
+        }
+        .lang-toggle-btn:hover,
+        .account-btn:hover {
+            background: rgba(255,246,236,0.12);
+            color: #FFF6EC;
+        }
+
+        #accountMenu .dropdown-menu {
+            min-width: 160px;
+        }
 
         .cart-btn {
             background: transparent;
@@ -75,6 +168,10 @@
             border-radius: 50px;
             padding: 1px 6px;
             font-family: 'Inter', sans-serif;
+        }
+        [dir="rtl"] .cart-badge {
+            right: auto;
+            left: -2px;
         }
 
         /* ---------- Page hero strip ---------- */
@@ -175,6 +272,7 @@
             line-height: 1;
         }
         .line-price { font-weight: 700; min-width: 62px; text-align: right; }
+        [dir="rtl"] .line-price { text-align: left; }
         .remove-line {
             background: none; border: none; color: #C7BBA8; font-size: 0.85rem;
         }
@@ -192,6 +290,10 @@
             padding-top: 12px;
             margin-top: 6px;
             border-top: 1px solid #F1E9DB;
+        }
+        [dir="rtl"] .ticket-totals .row-line.grand {
+            font-family: 'Cairo', sans-serif;
+            font-weight: 800;
         }
 
         .empty-cart { padding: 50px 26px; text-align: center; color: #8A7F6F; }
@@ -260,6 +362,11 @@
             border-radius: 6px;
             transition: transform .12s ease, background .15s ease;
         }
+        [dir="rtl"] .btn-place-order {
+            font-family: 'Cairo', sans-serif;
+            font-weight: 800;
+            letter-spacing: 0;
+        }
         .btn-place-order:hover { background: #FFC868; transform: translateY(-1px); }
         .btn-place-order:disabled { opacity: 0.5; transform: none; cursor: not-allowed; }
 
@@ -288,6 +395,13 @@
             .order-hero { padding: 110px 0 30px; }
             .step-track { flex-wrap: wrap; }
         }
+
+        @media (max-width: 400px) {
+            .lang-toggle-btn span,
+            .account-btn span { display: none; }
+            .lang-toggle-btn,
+            .account-btn { width: 38px; padding: 0; justify-content: center; }
+        }
     </style>
 </head>
 <body>
@@ -299,6 +413,11 @@
         </a>
 
         <div class="d-flex align-items-center order-lg-2">
+            <button class="lang-toggle-btn me-2" type="button" id="langToggleBtn" aria-label="Switch language">
+                <i class="fa-solid fa-globe"></i>
+                <span id="langToggleLabel">English</span>
+            </button>
+            <div id="accountControlWrapper" class="me-2"></div>
             <button class="cart-btn me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas" aria-controls="cartOffcanvas" aria-label="Open your order">
                 <i class="fa-solid fa-cart-shopping"></i>
                 <span class="cart-badge" id="cartBadge">0</span>
@@ -310,11 +429,11 @@
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
-                <li class="nav-item"><a class="nav-link" href="index.html#home">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="index.html#menu">Menu</a></li>
-                <li class="nav-item"><a class="nav-link" href="index.html#about">About</a></li>
-                <li class="nav-item"><a class="nav-link" href="index.html#contact">Contact</a></li>
-                <li class="nav-item"><a class="nav-link active" href="order.html">Your Order</a></li>
+                <li class="nav-item"><a class="nav-link" href="index.html#home" data-i18n="nav_home">الرئيسية</a></li>
+                <li class="nav-item"><a class="nav-link" href="index.html#menu" data-i18n="nav_menu">القائمة</a></li>
+                <li class="nav-item"><a class="nav-link" href="index.html#about" data-i18n="nav_about">من نحن</a></li>
+                <li class="nav-item"><a class="nav-link" href="index.html#contact" data-i18n="nav_contact">تواصل معنا</a></li>
+                <li class="nav-item"><a class="nav-link active" href="order.html" data-i18n="nav_order">طلبك</a></li>
             </ul>
         </div>
     </div>
@@ -323,17 +442,17 @@
 <!-- ============ Cart Offcanvas (referenced by navbar, defined here) ============ -->
 <div class="offcanvas offcanvas-end" tabindex="-1" id="cartOffcanvas" aria-labelledby="cartOffcanvasLabel">
     <div class="offcanvas-header border-bottom">
-        <h5 class="offcanvas-title" id="cartOffcanvasLabel" style="font-family:'Archivo Black',sans-serif;">Your Cart</h5>
+        <h5 class="offcanvas-title" id="cartOffcanvasLabel" style="font-family:'Archivo Black',sans-serif;" data-i18n="offcanvas_title">طلبك</h5>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body d-flex flex-column">
         <div id="offcanvasCartItems" class="flex-grow-1"></div>
         <div class="border-top pt-3 mt-2">
             <div class="d-flex justify-content-between mb-3">
-                <span class="fw-semibold">Subtotal</span>
+                <span class="fw-semibold" data-i18n="offcanvas_subtotal">الإجمالي الفرعي</span>
                 <span class="fw-bold" id="offcanvasSubtotal">EGP 0.00</span>
             </div>
-            <a href="order.html" class="btn btn-place-order w-100">Go to checkout</a>
+            <a href="order.html" class="btn btn-place-order w-100" data-i18n="offcanvas_go_checkout">الذهاب لإتمام الطلب</a>
         </div>
     </div>
 </div>
@@ -341,14 +460,14 @@
 <!-- ============ Hero / step tracker ============ -->
 <section class="order-hero">
     <div class="container">
-        <p class="qus-subtitle text-uppercase mb-2" style="letter-spacing:2px;">Almost there</p>
-        <h1>Your Order</h1>
+        <p class="qus-subtitle text-uppercase mb-2" style="letter-spacing:2px;" data-i18n="hero_kicker">خطوة كمان وخلصنا</p>
+        <h1 data-i18n="hero_title">طلبك</h1>
         <div class="step-track">
-            <div class="step"><span class="num">1</span><span>Cart</span></div>
+            <div class="step"><span class="num">1</span><span data-i18n="step_cart">السلة</span></div>
             <span class="divider">—</span>
-            <div class="step is-active"><span class="num">2</span><span>Details &amp; Payment</span></div>
+            <div class="step is-active"><span class="num">2</span><span data-i18n="step_details">التفاصيل والدفع</span></div>
             <span class="divider">—</span>
-            <div class="step"><span class="num">3</span><span>Confirmation</span></div>
+            <div class="step"><span class="num">3</span><span data-i18n="step_confirm">التأكيد</span></div>
         </div>
     </div>
 </section>
@@ -363,20 +482,20 @@
                 <div class="ticket">
                     <div class="ticket-head">
                         <div>
-                            <div class="qus-subtitle" style="font-size:0.78rem;color:#8A7F6F;letter-spacing:1px;">ORDER TICKET</div>
-                            <h3 style="font-size:1.15rem;">Order #<span id="orderNumber">7042</span></h3>
+                            <div class="qus-subtitle" style="font-size:0.78rem;color:#8A7F6F;letter-spacing:1px;" data-i18n="ticket_label">تذكرة الطلب</div>
+                            <h3 style="font-size:1.15rem;"><span data-i18n="ticket_order_prefix">طلب رقم </span><span id="orderNumber">7042</span></h3>
                         </div>
-                        <span class="stamp">FRESH!</span>
+                        <span class="stamp" data-i18n="ticket_stamp">طازة!</span>
                     </div>
                     <div class="ticket-perf"></div>
                     <div class="ticket-body" id="ticketBody">
                         <!-- line items injected by JS -->
                     </div>
                     <div class="ticket-totals">
-                        <div class="row-line"><span>Subtotal</span><span id="sumSubtotal">EGP 0.00</span></div>
-                        <div class="row-line"><span>Delivery fee</span><span id="sumDelivery">EGP 25.00</span></div>
-                        <div class="row-line"><span>Tax (14%)</span><span id="sumTax">EGP 0.00</span></div>
-                        <div class="row-line grand"><span>Total</span><span id="sumTotal">EGP 0.00</span></div>
+                        <div class="row-line"><span data-i18n="sum_subtotal">الإجمالي الفرعي</span><span id="sumSubtotal">EGP 0.00</span></div>
+                        <div class="row-line"><span data-i18n="sum_delivery">رسوم التوصيل</span><span id="sumDelivery">EGP 25.00</span></div>
+                        <div class="row-line"><span data-i18n="sum_tax">الضريبة (14%)</span><span id="sumTax">EGP 0.00</span></div>
+                        <div class="row-line grand"><span data-i18n="sum_total">الإجمالي</span><span id="sumTotal">EGP 0.00</span></div>
                     </div>
                 </div>
             </div>
@@ -388,28 +507,28 @@
                     <div class="form-panel mb-4">
                         <div class="panel-title">
                             <span class="num-badge">1</span>
-                            <span>Delivery details</span>
+                            <span data-i18n="panel1_title">تفاصيل التوصيل</span>
                         </div>
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label class="form-label">Full name</label>
+                                <label class="form-label" data-i18n="label_fullname">الاسم بالكامل</label>
                                 <input type="text" class="form-control" id="custName" placeholder="Moataz Arafat" required readonly>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Phone number</label>
+                                <label class="form-label" data-i18n="label_phone">رقم الهاتف</label>
                                 <input type="tel" class="form-control" id="custPhone" placeholder="01xxxxxxxxx" required readonly>
                             </div>
                             <div class="col-12">
-                                <label class="form-label">Delivery address</label>
-                                <input type="text" class="form-control" placeholder="Street, building, floor" required>
+                                <label class="form-label" data-i18n="label_address">عنوان التوصيل</label>
+                                <input type="text" class="form-control" id="custAddress" data-i18n-placeholder="placeholder_address" placeholder="الشارع، المبنى، الطابق" required>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">City</label>
-                                <input type="text" class="form-control" placeholder="Cairo" required>
+                                <label class="form-label" data-i18n="label_city">المدينة</label>
+                                <input type="text" class="form-control" id="custCity" data-i18n-placeholder="placeholder_city" placeholder="القاهرة" required>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Delivery notes (optional)</label>
-                                <input type="text" class="form-control" placeholder="Extra ketchup, no onions...">
+                                <label class="form-label" data-i18n="label_notes">ملاحظات التوصيل (اختياري)</label>
+                                <input type="text" class="form-control" id="custNotes" data-i18n-placeholder="placeholder_notes" placeholder="كاتشب زيادة، من غير بصل...">
                             </div>
                         </div>
                     </div>
@@ -417,50 +536,44 @@
                     <div class="form-panel mb-4">
                         <div class="panel-title">
                             <span class="num-badge">2</span>
-                            <span>Payment method</span>
+                            <span data-i18n="panel2_title">طريقة الدفع</span>
                         </div>
 
                         <div class="row g-2 mb-3">
                             <div class="col-md-4">
                                 <div class="pay-method text-center" data-method="card" title="Needs Fawry card tokenization approval — not live yet">
                                     <i class="fa-solid fa-credit-card d-block mb-1"></i>
-                                    <span style="font-size:0.85rem;">Card</span>
-                                    <span class="badge bg-secondary mt-1" style="font-size:0.6rem;">Not connected yet</span>
+                                    <span style="font-size:0.85rem;" data-i18n="pay_card">بطاقة</span>
+                                    <span class="badge bg-secondary mt-1" style="font-size:0.6rem;" data-i18n="pay_not_connected">غير متاحة بعد</span>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="pay-method text-center" data-method="wallet" title="Needs Fawry mobile wallet approval — not live yet">
                                     <i class="fa-solid fa-wallet d-block mb-1"></i>
-                                    <span style="font-size:0.85rem;">Mobile wallet</span>
-                                    <span class="badge bg-secondary mt-1" style="font-size:0.6rem;">Not connected yet</span>
+                                    <span style="font-size:0.85rem;" data-i18n="pay_wallet">محفظة إلكترونية</span>
+                                    <span class="badge bg-secondary mt-1" style="font-size:0.6rem;" data-i18n="pay_not_connected2">غير متاحة بعد</span>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="pay-method active text-center" data-method="PayAtFawry">
                                     <i class="fa-solid fa-store d-block mb-1"></i>
-                                    <span style="font-size:0.85rem;">Pay at Fawry</span>
-                                    <span class="badge" style="font-size:0.6rem;background:#1A1A1A;color:#F4B740;">Live</span>
+                                    <span style="font-size:0.85rem;" data-i18n="pay_fawry">الدفع عند فوري</span>
+                                    <span class="badge" style="font-size:0.6rem;background:#1A1A1A;color:#F4B740;" data-i18n="pay_live">متاحة</span>
                                 </div>
                             </div>
                         </div>
 
-                        <div id="cardFields" style="display:none;" class="text-muted small">
-                            Card payments aren't wired up yet — this needs Fawry's tokenization widget or PCI approval so we never handle raw card numbers ourselves.
-                        </div>
+                        <div id="cardFields" style="display:none;" class="text-muted small" data-i18n="card_fields_note">الدفع بالبطاقة لسه مش متاح — محتاجين موافقة فوري على خدمة توكينايزيشن البطاقات أو اعتماد PCI عشان محدش يشيل بيانات بطاقتك عندنا.</div>
 
-                        <div id="walletFields" style="display:none;" class="text-muted small">
-                            Mobile wallet payments need a separate Fawry approval and aren't connected yet.
-                        </div>
+                        <div id="walletFields" style="display:none;" class="text-muted small" data-i18n="wallet_fields_note">الدفع بالمحفظة محتاج موافقة منفصلة من فوري ولسه مش متاح.</div>
 
-                        <div id="cashNote" class="text-muted small">
-                            We'll generate a FawryPay reference number. Pay it in cash or by card at any Fawry outlet, or through your bank/wallet app — no card details needed here.
-                        </div>
+                        <div id="cashNote" class="text-muted small" data-i18n="cash_note">هنولّد رقم مرجعي من فوري باي. ادفعه كاش أو بالبطاقة في أي منفذ فوري، أو من خلال تطبيق البنك أو المحفظة — من غير ما تدخل بيانات بطاقة هنا.</div>
                     </div>
 
                     <button type="submit" class="btn btn-place-order w-100" id="placeOrderBtn">
-                        Place order &mdash; <span id="btnTotal">EGP 0.00</span>
+                        <span id="placeOrderPrefix" data-i18n="place_order_prefix">إتمام الطلب — </span><span id="btnTotal">EGP 0.00</span>
                     </button>
-                    <p class="secure-note"><i class="fa-solid fa-lock"></i> Your payment details are encrypted and secure.</p>
+                    <p class="secure-note"><i class="fa-solid fa-lock"></i> <span data-i18n="secure_note">بيانات الدفع الخاصة بك مشفرة وآمنة.</span></p>
                 </form>
             </div>
         </div>
@@ -473,10 +586,10 @@
         <div class="modal-content" style="border-radius:10px;border:none;">
             <div class="modal-body text-center py-5 px-4">
                 <div class="confirm-icon"><i class="fa-solid fa-check"></i></div>
-                <h3 class="mb-2">Order placed!</h3>
-                <p class="text-muted mb-1">Order #<span id="confirmOrderNumber">7042</span> is on the grill.</p>
-                <p class="text-muted mb-4">Estimated delivery: 30&ndash;40 minutes.</p>
-                <a href="index.html" class="btn btn-place-order">Back to menu</a>
+                <h3 class="mb-2" data-i18n="confirm_title">تم تأكيد الطلب!</h3>
+                <p class="text-muted mb-1"><span data-i18n="confirm_order_prefix">طلب رقم </span><span id="confirmOrderNumber">7042</span><span id="confirmOrderSuffix" data-i18n="confirm_order_suffix"> تحت التحضير دلوقتي.</span></p>
+                <p class="text-muted mb-4" id="confirmEta" data-i18n="confirm_eta">الوقت المتوقع للتوصيل: 30-40 دقيقة.</p>
+                <a href="index.html" class="btn btn-place-order" data-i18n="confirm_back">العودة للقائمة</a>
             </div>
         </div>
     </div>
@@ -484,6 +597,205 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-atwg2Pkwv9vp0ygtn1JAojH0nYbwNJLPhwyoVbhoPwBhjQPR5VtM2+xf0Uwh9KtT" crossorigin="anonymous"></script>
 <script>
+    /* ============================================================
+       LANGUAGE / TRANSLATIONS (same pattern + storage key as index.html)
+    ============================================================ */
+    const translations = {
+        ar: {
+            nav_home: "الرئيسية",
+            nav_menu: "القائمة",
+            nav_about: "من نحن",
+            nav_contact: "تواصل معنا",
+            nav_order: "طلبك",
+            nav_login: "تسجيل الدخول",
+            nav_logout: "تسجيل الخروج",
+            offcanvas_title: "طلبك",
+            offcanvas_subtotal: "الإجمالي الفرعي",
+            offcanvas_go_checkout: "الذهاب لإتمام الطلب",
+            offcanvas_empty: "لا توجد عناصر بعد.",
+            hero_kicker: "خطوة كمان وخلصنا",
+            hero_title: "طلبك",
+            step_cart: "السلة",
+            step_details: "التفاصيل والدفع",
+            step_confirm: "التأكيد",
+            ticket_label: "تذكرة الطلب",
+            ticket_order_prefix: "طلب رقم ",
+            ticket_stamp: "طازة!",
+            sum_subtotal: "الإجمالي الفرعي",
+            sum_delivery: "رسوم التوصيل",
+            sum_tax: "الضريبة (14%)",
+            sum_total: "الإجمالي",
+            empty_ticket: "تذكرتك فارغة.",
+            browse_menu: "تصفح القائمة",
+            each_suffix: "للقطعة",
+            panel1_title: "تفاصيل التوصيل",
+            label_fullname: "الاسم بالكامل",
+            label_phone: "رقم الهاتف",
+            label_address: "عنوان التوصيل",
+            placeholder_address: "الشارع، المبنى، الطابق",
+            label_city: "المدينة",
+            placeholder_city: "القاهرة",
+            label_notes: "ملاحظات التوصيل (اختياري)",
+            placeholder_notes: "كاتشب زيادة، من غير بصل...",
+            panel2_title: "طريقة الدفع",
+            pay_card: "بطاقة",
+            pay_not_connected: "غير متاحة بعد",
+            pay_wallet: "محفظة إلكترونية",
+            pay_fawry: "الدفع عند فوري",
+            pay_live: "متاحة",
+            card_fields_note: "الدفع بالبطاقة لسه مش متاح — محتاجين موافقة فوري على خدمة توكينايزيشن البطاقات أو اعتماد PCI عشان محدش يشيل بيانات بطاقتك عندنا.",
+            wallet_fields_note: "الدفع بالمحفظة محتاج موافقة منفصلة من فوري ولسه مش متاح.",
+            cash_note: "هنولّد رقم مرجعي من فوري باي. ادفعه كاش أو بالبطاقة في أي منفذ فوري، أو من خلال تطبيق البنك أو المحفظة — من غير ما تدخل بيانات بطاقة هنا.",
+            place_order_prefix: "إتمام الطلب — ",
+            placing: "بنكلم فوري...",
+            secure_note: "بيانات الدفع الخاصة بك مشفرة وآمنة.",
+            confirm_title: "تم تأكيد الطلب!",
+            confirm_order_prefix: "طلب رقم ",
+            confirm_order_suffix: " تحت التحضير دلوقتي.",
+            confirm_eta: "الوقت المتوقع للتوصيل: 30-40 دقيقة.",
+            confirm_eta_fawry: "ادفع الرقم المرجعي ده في أي منفذ فوري أو من تطبيق البنك/المحفظة عشان تخلص طلبك.",
+            confirm_back: "العودة للقائمة",
+            lang_toggle_label: "English",
+            alert_payment_not_connected: "الدفع بالبطاقة أو المحفظة لسه مش متاح — اختار \"الدفع عند فوري\" عشان تكمّل طلب حقيقي.",
+            alert_backend_error: "معلش، مش قادرين نوصل لسيرفر الدفع: "
+        },
+        en: {
+            nav_home: "Home",
+            nav_menu: "Menu",
+            nav_about: "About",
+            nav_contact: "Contact",
+            nav_order: "Your Order",
+            nav_login: "Log In",
+            nav_logout: "Log Out",
+            offcanvas_title: "Your Cart",
+            offcanvas_subtotal: "Subtotal",
+            offcanvas_go_checkout: "Go to checkout",
+            offcanvas_empty: "No items yet.",
+            hero_kicker: "Almost there",
+            hero_title: "Your Order",
+            step_cart: "Cart",
+            step_details: "Details & Payment",
+            step_confirm: "Confirmation",
+            ticket_label: "ORDER TICKET",
+            ticket_order_prefix: "Order #",
+            ticket_stamp: "FRESH!",
+            sum_subtotal: "Subtotal",
+            sum_delivery: "Delivery fee",
+            sum_tax: "Tax (14%)",
+            sum_total: "Total",
+            empty_ticket: "Your ticket is empty.",
+            browse_menu: "Browse the menu",
+            each_suffix: "each",
+            panel1_title: "Delivery details",
+            label_fullname: "Full name",
+            label_phone: "Phone number",
+            label_address: "Delivery address",
+            placeholder_address: "Street, building, floor",
+            label_city: "City",
+            placeholder_city: "Cairo",
+            label_notes: "Delivery notes (optional)",
+            placeholder_notes: "Extra ketchup, no onions...",
+            panel2_title: "Payment method",
+            pay_card: "Card",
+            pay_not_connected: "Not connected yet",
+            pay_wallet: "Mobile wallet",
+            pay_fawry: "Pay at Fawry",
+            pay_live: "Live",
+            card_fields_note: "Card payments aren't wired up yet — this needs Fawry's tokenization widget or PCI approval so we never handle raw card numbers ourselves.",
+            wallet_fields_note: "Mobile wallet payments need a separate Fawry approval and aren't connected yet.",
+            cash_note: "We'll generate a FawryPay reference number. Pay it in cash or by card at any Fawry outlet, or through your bank/wallet app — no card details needed here.",
+            place_order_prefix: "Place order — ",
+            placing: "Talking to Fawry...",
+            secure_note: "Your payment details are encrypted and secure.",
+            confirm_title: "Order placed!",
+            confirm_order_prefix: "Order #",
+            confirm_order_suffix: " is on the grill.",
+            confirm_eta: "Estimated delivery: 30–40 minutes.",
+            confirm_eta_fawry: "Pay this reference at any Fawry outlet or your banking/wallet app to complete your order.",
+            confirm_back: "Back to menu",
+            lang_toggle_label: "العربية",
+            alert_payment_not_connected: "Card and mobile wallet payments aren't connected yet — pick \"Pay at Fawry\" to complete a real order.",
+            alert_backend_error: "Couldn't reach the payment backend: "
+        }
+    };
+
+    function getCurrentLang() {
+        return localStorage.getItem('xburger_lang') || 'ar';
+    }
+
+    /* ============================================================
+       AUTH — account control in the navbar + logout.
+       (The page-level login guard already ran, inline in <head>,
+       before this script or any markup below it painted.)
+    ============================================================ */
+    function getRegisteredUser() {
+        try { return JSON.parse(localStorage.getItem('xburger_user') || 'null'); }
+        catch (e) { return null; }
+    }
+
+    function logout() {
+        localStorage.removeItem('xburger_user');
+        // order.html requires a logged-in user, so once we log out there's
+        // nothing useful to show here — go back to the menu.
+        window.location.href = 'index.html';
+    }
+
+    function renderAccountControl() {
+        const lang = getCurrentLang();
+        const t = translations[lang];
+        const wrapper = document.getElementById('accountControlWrapper');
+        const user = getRegisteredUser();
+
+        if (user) {
+            const firstName = (user.name || '').trim().split(/\s+/)[0] || user.name;
+            wrapper.innerHTML = `
+              <div class="dropdown">
+                <button class="account-btn dropdown-toggle" type="button" id="accountToggleBtn" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="fa-solid fa-circle-user"></i>
+                  <span>${firstName}</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" id="accountMenu" aria-labelledby="accountToggleBtn">
+                  <li><button class="dropdown-item" type="button" id="logoutMenuBtn"><i class="fa-solid fa-right-from-bracket me-2"></i>${t.nav_logout}</button></li>
+                </ul>
+              </div>`;
+            document.getElementById('logoutMenuBtn').addEventListener('click', logout);
+        } else {
+            wrapper.innerHTML = `<a href="login.html" class="account-btn"><i class="fa-solid fa-circle-user"></i><span>${t.nav_login}</span></a>`;
+        }
+    }
+
+    function applyLanguage(lang) {
+        const t = translations[lang];
+        const html = document.documentElement;
+        html.setAttribute('lang', lang);
+        html.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+        localStorage.setItem('xburger_lang', lang);
+
+        document.getElementById('bootstrapLtr').disabled = (lang === 'ar');
+        document.getElementById('bootstrapRtl').disabled = (lang !== 'ar');
+
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (t[key] !== undefined) el.textContent = t[key];
+        });
+
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+            const key = el.getAttribute('data-i18n-placeholder');
+            if (t[key] !== undefined) el.setAttribute('placeholder', t[key]);
+        });
+
+        const langLabel = document.getElementById('langToggleLabel');
+        if (langLabel) langLabel.textContent = t.lang_toggle_label;
+
+        renderAccountControl();
+        renderAll();
+    }
+
+    document.getElementById('langToggleBtn').addEventListener('click', function () {
+        const next = getCurrentLang() === 'ar' ? 'en' : 'ar';
+        applyLanguage(next);
+    });
+
     // ---------------------------------------------------------------
     // Cart storage: SAME model as index.html so items added on the
     // menu page show up here automatically.
@@ -496,34 +808,33 @@
     const DELIVERY_FEE = 25;
     const TAX_RATE = 0.14;
 
+    // Same menu data as index.html, keyed the same way, so a cart entry of
+    // { key: 'classic_burger', qty: 1 } can be resolved to a name/price/image
+    // in whichever language is currently active — matching index.html's
+    // actual storage shape [{ key, qty }] instead of a different one.
+    const menuItems = {
+        classic_burger: { en: "Classic Burger", ar: "برجر كلاسيك", price: 120, img: "Photos/2024_retail_double-stack-cheeseburger_400x400.webp" },
+        double_cheese: { en: "Double Cheese", ar: "دبل تشيز", price: 160, img: "Photos/2019_df_retail_butter-burger_20912_600x600.webp" },
+        bbq_burger: { en: "BBQ Burger", ar: "برجر باربيكيو", price: 150, img: "Photos/16961-bbq-pulled-pork-burger_400x400.webp" },
+        french_fries: { en: "French Fries", ar: "بطاطس مقلية", price: 40, img: "Photos/images.jpg" },
+        cola: { en: "Cola", ar: "كولا", price: 20, img: "Photos/coca-cola-pouring-moment-stockcake.jpg" },
+        lemonade: { en: "Fresh Lemonade", ar: "ليمون فريش", price: 30, img: "Photos/lemonada_22_5716846e-edc5-4c25-9a21-d1c2a7ba13d2.webp" }
+    };
+
     function getCart() {
-        try { return JSON.parse(localStorage.getItem(CART_KEY) || '[]'); }
-        catch (e) { return []; }
+        try {
+            const raw = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
+            // only keep entries that reference a real menu item
+            return raw.filter(item => item && item.key && menuItems[item.key] && item.qty > 0);
+        } catch (e) { return []; }
     }
 
     function saveCart(cart) {
         localStorage.setItem(CART_KEY, JSON.stringify(cart));
     }
 
-    // index.html stores price as a string like "120 EGP" — pull the number out
-    function priceToNumber(priceStr) {
-        return parseInt(String(priceStr).replace(/[^\d]/g, ''), 10) || 0;
-    }
-
-    // stable-ish id for DOM/data-id purposes, derived from the item name
-    function slug(name) {
-        return String(name).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-    }
-
     function money(n) {
         return 'EGP ' + n.toFixed(2);
-    }
-
-    // register.html saves { name, phone } here on sign up — reuse it so the
-    // customer doesn't have to retype their details at checkout.
-    function getRegisteredUser() {
-        try { return JSON.parse(localStorage.getItem('xburger_user') || 'null'); }
-        catch (e) { return null; }
     }
 
     function prefillCustomerDetails() {
@@ -549,25 +860,28 @@
     }
 
     function renderTicket(cart) {
+        const lang = getCurrentLang();
+        const t = translations[lang];
         const body = document.getElementById('ticketBody');
         if (cart.length === 0) {
             body.innerHTML = `
                 <div class="empty-cart">
                     <i class="fa-solid fa-burger"></i>
-                    <p>Your ticket is empty.</p>
-                    <a href="index.html#menu" class="btn btn-place-order btn-sm mt-2">Browse the menu</a>
+                    <p>${t.empty_ticket}</p>
+                    <a href="index.html#menu" class="btn btn-place-order btn-sm mt-2">${t.browse_menu}</a>
                 </div>`;
             return;
         }
         body.innerHTML = cart.map(item => {
-            const unit = priceToNumber(item.price);
-            const img = item.image || '';
+            const data = menuItems[item.key];
+            const unit = data.price;
+            const name = data[lang];
             return `
-            <div class="order-line" data-name="${item.name.replace(/"/g, '&quot;')}">
-                <img src="${img}" alt="${item.name}" onerror="this.style.background='#F1E9DB';this.src='';">
+            <div class="order-line" data-key="${item.key}">
+                <img src="${data.img}" alt="${name}" onerror="this.style.background='#F1E9DB';this.src='';">
                 <div class="flex-grow-1">
-                    <div class="name">${item.name}</div>
-                    <div class="meta">${money(unit)} each</div>
+                    <div class="name">${name}</div>
+                    <div class="meta">${money(unit)} ${t.each_suffix}</div>
                     <div class="qty-control mt-1">
                         <button type="button" class="qty-down">&minus;</button>
                         <span>${item.qty}</span>
@@ -582,36 +896,40 @@
         }).join('');
 
         body.querySelectorAll('.order-line').forEach(line => {
-            const name = line.dataset.name;
-            line.querySelector('.qty-up').addEventListener('click', () => changeQty(name, 1));
-            line.querySelector('.qty-down').addEventListener('click', () => changeQty(name, -1));
-            line.querySelector('.remove-line').addEventListener('click', () => removeItem(name));
+            const key = line.dataset.key;
+            line.querySelector('.qty-up').addEventListener('click', () => changeQty(key, 1));
+            line.querySelector('.qty-down').addEventListener('click', () => changeQty(key, -1));
+            line.querySelector('.remove-line').addEventListener('click', () => removeItem(key));
         });
     }
 
     function renderOffcanvas(cart) {
+        const lang = getCurrentLang();
+        const t = translations[lang];
         const el = document.getElementById('offcanvasCartItems');
         if (cart.length === 0) {
-            el.innerHTML = '<p class="text-muted text-center mt-4">No items yet.</p>';
+            el.innerHTML = `<p class="text-muted text-center mt-4">${t.offcanvas_empty}</p>`;
         } else {
             el.innerHTML = cart.map(item => {
-                const unit = priceToNumber(item.price);
+                const data = menuItems[item.key];
+                const unit = data.price;
+                const name = data[lang];
                 return `
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <div>
-                        <div class="fw-semibold" style="font-size:0.9rem;">${item.name}</div>
+                        <div class="fw-semibold" style="font-size:0.9rem;">${name}</div>
                         <div class="text-muted" style="font-size:0.78rem;">x${item.qty}</div>
                     </div>
                     <div class="fw-bold" style="font-size:0.9rem;">${money(unit * item.qty)}</div>
                 </div>`;
             }).join('');
         }
-        const subtotal = cart.reduce((sum, i) => sum + priceToNumber(i.price) * i.qty, 0);
+        const subtotal = cart.reduce((sum, i) => sum + menuItems[i.key].price * i.qty, 0);
         document.getElementById('offcanvasSubtotal').textContent = money(subtotal);
     }
 
     function renderTotals(cart) {
-        const subtotal = cart.reduce((sum, i) => sum + priceToNumber(i.price) * i.qty, 0);
+        const subtotal = cart.reduce((sum, i) => sum + menuItems[i.key].price * i.qty, 0);
         const delivery = cart.length ? DELIVERY_FEE : 0;
         const tax = subtotal * TAX_RATE;
         const total = subtotal + delivery + tax;
@@ -627,19 +945,19 @@
     }
 
     // These mirror index.html's changeQty/removeFromOrder so both pages
-    // stay in sync via the same 'xburger_order' localStorage array.
-    function changeQty(name, delta) {
+    // stay in sync via the same 'xburger_order' localStorage array and shape.
+    function changeQty(key, delta) {
         const cart = getCart();
-        const item = cart.find(i => i.name === name);
+        const item = cart.find(i => i.key === key);
         if (!item) return;
         item.qty += delta;
-        const updated = item.qty <= 0 ? cart.filter(i => i.name !== name) : cart;
+        const updated = item.qty <= 0 ? cart.filter(i => i.key !== key) : cart;
         saveCart(updated);
         renderAll();
     }
 
-    function removeItem(name) {
-        const cart = getCart().filter(i => i.name !== name);
+    function removeItem(key) {
+        const cart = getCart().filter(i => i.key !== key);
         saveCart(cart);
         renderAll();
     }
@@ -662,24 +980,33 @@
     });
 
     function setPlacingState(isPlacing) {
+        const lang = getCurrentLang();
+        const t = translations[lang];
         const btn = document.getElementById('placeOrderBtn');
         btn.disabled = isPlacing;
         btn.dataset.originalText = btn.dataset.originalText || btn.innerHTML;
         btn.innerHTML = isPlacing
-            ? '<span class="spinner-border spinner-border-sm me-2"></span>Talking to Fawry...'
+            ? `<span class="spinner-border spinner-border-sm me-2"></span>${t.placing}`
             : btn.dataset.originalText;
+        if (!isPlacing) {
+            // originalText was cached before a language switch could happen; keep it fresh
+            btn.dataset.originalText = `<span id="placeOrderPrefix">${t.place_order_prefix}</span><span id="btnTotal">${document.getElementById('btnTotal') ? document.getElementById('btnTotal').textContent : 'EGP 0.00'}</span>`;
+        }
     }
 
     // Submit -> real call to the backend -> real Fawry reference number
     document.getElementById('orderForm').addEventListener('submit', async function (e) {
         e.preventDefault();
+        const lang = getCurrentLang();
+        const t = translations[lang];
+
         if (!this.checkValidity()) {
             this.reportValidity();
             return;
         }
 
         if (selectedMethod !== 'PayAtFawry') {
-            alert('Card and mobile wallet payments aren\'t connected yet — pick "Pay at Fawry" to complete a real order.');
+            alert(t.alert_payment_not_connected);
             return;
         }
 
@@ -697,9 +1024,9 @@
                 email: `${(phoneInput ? phoneInput.value : 'guest').replace(/\D/g, '')}@xburger-guest.com`
             },
             items: cart.map(i => ({
-                id: slug(i.name),
-                name: i.name,
-                price: priceToNumber(i.price),
+                id: i.key,
+                name: menuItems[i.key][lang],
+                price: menuItems[i.key].price,
                 qty: i.qty
             })),
             deliveryFee: delivery,
@@ -721,23 +1048,22 @@
             }
 
             document.getElementById('confirmOrderNumber').textContent = data.fawryReferenceNumber;
-            const modalBody = document.querySelector('#confirmModal .modal-body');
-            modalBody.querySelector('p.mb-4').textContent =
-                'Pay this reference at any Fawry outlet or your banking/wallet app to complete your order.';
+            document.getElementById('confirmOrderSuffix').textContent = '';
+            document.getElementById('confirmEta').textContent = t.confirm_eta_fawry;
 
             localStorage.removeItem(CART_KEY);
             const modal = new bootstrap.Modal(document.getElementById('confirmModal'));
             modal.show();
             renderAll();
         } catch (err) {
-            alert('Couldn\'t reach the payment backend: ' + err.message + '\n\nMake sure the server in xburger-backend is running (npm start) with valid Fawry credentials in .env.');
+            alert(t.alert_backend_error + err.message + '\n\nMake sure the server in xburger-backend is running (npm start) with valid Fawry credentials in .env.');
         } finally {
             setPlacingState(false);
         }
     });
 
     prefillCustomerDetails();
-    renderAll();
+    applyLanguage(getCurrentLang());
 </script>
 </body>
 </html>
