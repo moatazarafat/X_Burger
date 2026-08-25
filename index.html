@@ -205,9 +205,46 @@
         font-size: 0.9rem;
       }
 
-      #accountMenu .dropdown-menu {
-        min-width: 160px;
-      }
+      #accountMenu.dropdown-menu {
+  min-width: 190px;
+  background: #232020;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 8px;
+  margin-top: 10px !important;
+  box-shadow: 0 10px 26px rgba(0,0,0,0.35);
+}
+
+#accountMenu .dropdown-item {
+  color: #E0E0E0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+#accountMenu .dropdown-item:hover,
+#accountMenu .dropdown-item:focus {
+  background: rgba(232,121,47,0.12);
+  color: #E8792F;
+}
+
+#accountMenu .dropdown-item i {
+  color: #B5B5B5;
+  transition: color 0.15s ease;
+}
+
+#accountMenu .dropdown-item:hover i,
+#accountMenu .dropdown-item:focus i {
+  color: #E8792F;
+}
+
+[dir="rtl"] #accountMenu .dropdown-item i.fa-right-from-bracket {
+  transform: scaleX(-1);
+}   
 
       .cart-badge {
         position: absolute;
@@ -619,6 +656,119 @@
           margin: 20px auto;
         }
       }
+
+      /* ---------- Contact section ---------- */
+.contact-section {
+  background: #1A1A1A;
+  padding: 64px 0 72px;
+}
+
+.contact-section__title {
+  color: #fff;
+  font-family: 'Archivo Black', sans-serif;
+  letter-spacing: 0.5px;
+  text-align: center;
+  margin-bottom: 6px;
+}
+
+[dir="rtl"] .contact-section__title {
+  font-family: 'Cairo', sans-serif;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+.contact-section__subtitle {
+  color: #B5B5B5;
+  text-align: center;
+  margin-bottom: 40px;
+  font-size: 0.95rem;
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.contact-card {
+  background: #232020;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 16px;
+  padding: 28px 22px;
+  text-align: center;
+  text-decoration: none;
+  display: block;
+  transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+}
+
+.contact-card:hover {
+  transform: translateY(-4px);
+  border-color: #E8792F;
+  background: #2A2626;
+}
+
+.contact-card__icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(232,121,47,0.12);
+  color: #E8792F;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  margin: 0 auto 16px;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+.contact-card:hover .contact-card__icon {
+  background: #E8792F;
+  color: #fff;
+}
+
+.contact-card__label {
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+
+.contact-card__value {
+  color: #B5B5B5;
+  font-size: 0.85rem;
+  margin-bottom: 14px;
+  line-height: 1.5;
+  min-height: 1.3em;
+}
+
+.contact-card__action {
+  color: #F4B740;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+[dir="rtl"] .contact-card__action {
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.contact-card__action i {
+  margin-inline-start: 4px;
+  transition: transform 0.2s ease;
+}
+
+.contact-card:hover .contact-card__action i {
+  transform: translateX(3px);
+}
+
+[dir="rtl"] .contact-card:hover .contact-card__action i {
+  transform: translateX(-3px);
+}
     </style>
 </head>
 <body>
@@ -680,7 +830,7 @@
 <div id="xburgerToastContainer" class="toast-container position-fixed top-0 end-0 p-3"></div>
 
 <div class="hero-video position-relative overflow-hidden" id="home">
-  <video id="heroVideo" autoplay muted loop playsinline class="position-absolute top-0 start-0 w-100 h-100" style="object-fit: cover; z-index: -2;">
+  <video id="heroVideo" autoplay muted  playsinline class="position-absolute top-0 start-0 w-100 h-100" style="object-fit: cover; z-index: -2;">
     <source src="Photos/356623.mp4" type="video/mp4">
   </video>
   <div class="position-absolute top-0 start-0 w-100 h-100" style="background: rgba(0,0,0,0.45); z-index: -1;"></div>
@@ -828,14 +978,48 @@
         </div>
     </div>
 </div>
-<div class="contact">
+<div class="contact-section" id="contact">
+  <h2 class="contact-section__title" data-i18n="contact_title" style="padding: 20px;">تواصل معنا</h2>
 
+  <div class="contact-grid">
+
+    <a class="contact-card" href="tel:+201026641352">
+      <div class="contact-card__icon"><i class="fa-solid fa-phone"></i></div>
+      <div class="contact-card__label" data-i18n="contact_phone_label">اتصل بينا</div>
+      <div class="contact-card__value" dir="ltr">+20 102 664 1352</div>
+      <div class="contact-card__action"><span data-i18n="contact_phone_action">اتصل الآن</span> <i class="fa-solid fa-arrow-left"></i></div>
+    </a>
+
+    <a class="contact-card" href="https://www.google.com/maps/search/?api=1&query=%D9%85%D9%8A%D8%AF%D8%A7%D9%86+%D8%A7%D9%84%D9%85%D8%B2%D9%84%D9%82%D8%A7%D9%86+%D9%82%D9%88%D8%B5" target="_blank" rel="noopener">
+      <div class="contact-card__icon"><i class="fa-solid fa-location-dot"></i></div>
+      <div class="contact-card__label" data-i18n="contact_address_label">موقعنا</div>
+      <div class="contact-card__value" data-i18n="contact_address_value">ميدان المزلقان، بجوار كوبري المشاة، قوص</div>
+      <div class="contact-card__action"><span data-i18n="contact_address_action">افتح الخريطة</span> <i class="fa-solid fa-arrow-left"></i></div>
+    </a>
+
+    <!-- TODO: replace with your real WhatsApp number (international format, no +) -->
+    <a class="contact-card" href="https://wa.me/201026641352" target="_blank" rel="noopener">
+      <div class="contact-card__icon"><i class="fa-brands fa-whatsapp"></i></div>
+      <div class="contact-card__label" data-i18n="contact_whatsapp_label">واتساب</div>
+      <div class="contact-card__value" dir="ltr">+20 102 664 1352</div>
+      <div class="contact-card__action"><span data-i18n="contact_whatsapp_action">راسلنا</span> <i class="fa-solid fa-arrow-left"></i></div>
+    </a>
+
+    <!-- TODO: replace with your real Facebook page URL -->
+    <a class="contact-card" href="https://www.facebook.com/XBurrger" target="_blank" rel="noopener">
+      <div class="contact-card__icon"><i class="fa-brands fa-facebook-f"></i></div>
+      <div class="contact-card__label" data-i18n="contact_facebook_label">فيسبوك</div>
+      <div class="contact-card__value">X-Burger Qus</div>
+      <div class="contact-card__action"><span data-i18n="contact_facebook_action">زور صفحتنا</span> <i class="fa-solid fa-arrow-left"></i></div>
+    </a>
+
+  </div>
 </div>
 
 <footer>
     <h3 class="ahmed"><b>X-Burger</b></h3>
     <p data-i18n="footer_rights">© 2026 إكس برجر. جميع الحقوق محفوظة.</p>
-    <p>Developed By Eng / <a href="https://www.linkedin.com/in/moataz-arafat-13a27435a/" target="_blank" title="Go to Moataz Profile" style="text-decoration: none;color: #E8792F;">Moataz Arafat</a></p>
+    <p>Developed By Eng / <a href="https://moatazarafat.github.io/Portflio/" target="_blank" title="Go to Moataz Profile" style="text-decoration: none;color: #E8792F;">Moataz Arafat</a></p>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
@@ -848,10 +1032,6 @@
       navbar.classList.remove('scrolled');
     }
   });
-
-  /* ============================================================
-     SCROLLSPY — highlight the nav link matching the visible section
-  ============================================================ */
   (function () {
     const sections = ['#home', '#menu', '#about', '#contact']
       .map(sel => document.querySelector(sel))
@@ -882,13 +1062,6 @@
 
     sections.forEach(sec => spyObserver.observe(sec));
   })();
-
-  /* ============================================================
-     AUTH
-     'xburger_user' = the CURRENTLY logged-in session, e.g. { name, phone }.
-     Accounts themselves (with password hashes) live in 'xburger_users'
-     and are only touched by register.html / login.html / forgot-password.html.
-  ============================================================ */
   function isLoggedIn() {
     return localStorage.getItem('xburger_user') !== null;
   }
@@ -929,7 +1102,7 @@
         </div>`;
       document.getElementById('logoutMenuBtn').addEventListener('click', logout);
     } else {
-      wrapper.innerHTML = `<a href="login.html" class="account-btn"><i class="fa-solid fa-circle-user"></i><span>${t.nav_login}</span></a>`;
+      wrapper.innerHTML = `<a href="login.html" style="text-decoration:none" class="account-btn"<i class="fa-solid fa-circle-user"></i><span>${t.nav_login}</span></a>`;
     }
   }
 
@@ -971,7 +1144,18 @@
       stat_items: "عناصر القائمة",
       stat_satisfaction: "نسبة الرضا",
       footer_rights: "© 2026 إكس برجر. جميع الحقوق محفوظة.",
-      lang_toggle_label: "English"
+      lang_toggle_label: "English",
+      contact_title: "تواصل معنا",
+contact_subtitle: "عندك سؤال أو طلب خاص؟ إحنا هنا.",
+contact_phone_label: "اتصل بينا",
+contact_phone_action: "اتصل الآن",
+contact_address_label: "موقعنا",
+contact_address_value: "ميدان المزلقان، بجوار كوبري المشاة، قوص",
+contact_address_action: "افتح الخريطة",
+contact_whatsapp_label: "واتساب",
+contact_whatsapp_action: "راسلنا",
+contact_facebook_label: "فيسبوك",
+contact_facebook_action: "زور صفحتنا",
     },
     en: {
       nav_home: "Home",
@@ -1007,7 +1191,18 @@
       stat_items: "Menu Items",
       stat_satisfaction: "Satisfaction",
       footer_rights: "© 2026 XBurger. All rights reserved.",
-      lang_toggle_label: "العربية"
+      lang_toggle_label: "العربية",
+   contact_title: "Get in Touch",
+contact_phone_label: "Call Us",
+contact_phone_action: "Call now",
+contact_address_label: "Find Us",
+contact_address_value: "El Mazlaqan Square, next to the pedestrian bridge, Qus",
+contact_address_action: "Open in Maps",
+contact_whatsapp_label: "WhatsApp",
+contact_whatsapp_action: "Message us",
+contact_facebook_label: "Facebook",
+contact_facebook_action: "Visit our page",
+
     }
   };
 
@@ -1280,15 +1475,11 @@ document.getElementById('checkoutBtn').addEventListener('click', function () {
     statsObserver.observe(statsBannerEl);
   }
 
-  /* ============================================================
-     INIT
-  ============================================================ */
   document.addEventListener('DOMContentLoaded', function () {
     applyLanguage(getCurrentLang());
     updateCartBadge();
 
-    // if the user just came back from logging in/registering, add the
-    // pending item automatically
+
     const pending = sessionStorage.getItem('xburger_pending_item');
     if (pending && isLoggedIn()) {
       const { key } = JSON.parse(pending);
