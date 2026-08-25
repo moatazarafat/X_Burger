@@ -1032,6 +1032,10 @@
       navbar.classList.remove('scrolled');
     }
   });
+
+  /* ============================================================
+     SCROLLSPY — highlight the nav link matching the visible section
+  ============================================================ */
   (function () {
     const sections = ['#home', '#menu', '#about', '#contact']
       .map(sel => document.querySelector(sel))
@@ -1475,11 +1479,15 @@ document.getElementById('checkoutBtn').addEventListener('click', function () {
     statsObserver.observe(statsBannerEl);
   }
 
+  /* ============================================================
+     INIT
+  ============================================================ */
   document.addEventListener('DOMContentLoaded', function () {
     applyLanguage(getCurrentLang());
     updateCartBadge();
 
-
+    // if the user just came back from logging in/registering, add the
+    // pending item automatically
     const pending = sessionStorage.getItem('xburger_pending_item');
     if (pending && isLoggedIn()) {
       const { key } = JSON.parse(pending);
